@@ -11,3 +11,8 @@ spring:
 jason:
   imagepath: D://毕业设计//image//
 
+#jwt:
+#  secret: a9fBXT6_J0hst6VY2QLDGvFhCDyYWZ3-w12xbiyGUrdazuVQHS6g81-TnbIsMvRXzX2vAW_OKMQb9TYNQ9nzmg
+
+jwt:
+  secret: jason
