@@ -1,0 +1,18 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    url: jdbc:mysql:///evaluation?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 123456
+
+jason:
+  imagepath: D://毕业设计//image//
+
+#jwt:
+#  secret: a9fBXT6_J0hst6VY2QLDGvFhCDyYWZ3-w12xbiyGUrdazuVQHS6g81-TnbIsMvRXzX2vAW_OKMQb9TYNQ9nzmg
+
+jwt:
+  secret: jason

@@ -11,9 +11,12 @@
 
     <artifactId>mirageLedger-user</artifactId>
 
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>com.jason.mirageLedger</groupId>
+            <artifactId>mirageLedger-common</artifactId>
+            <version>1.0.0.0</version>
+        </dependency>
+    </dependencies>
 
 </project>
