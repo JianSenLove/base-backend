@@ -17,7 +17,7 @@
     <version>1.0.0.0</version>
     <modules>
         <module>mirageLedger-user</module>
-        <module>mirageLedger-record</module>
+        <module>mirageLedger-course</module>
         <module>mirageLedger-runner</module>
         <module>mirageLedger-common</module>
     </modules>

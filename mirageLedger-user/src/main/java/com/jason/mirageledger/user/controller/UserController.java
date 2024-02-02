@@ -2,6 +2,7 @@ package com.jason.mirageledger.user.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.jason.mirageledger.common.AuthenticationUtil;
 import com.jason.mirageledger.common.JwtTokenUtil;
 import com.jason.mirageledger.common.RestPreconditions;
 import com.jason.mirageledger.user.entity.po.User;
@@ -16,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/mirageLedger/user")
 public class UserController {
 
     @Autowired
@@ -43,14 +44,9 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    @Transactional(rollbackFor = Exception.class)
     public User userRegister(@RequestBody User user) {
 
-        // 只有管理员能进行注册操作
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserId = authentication.getName();
-        RestPreconditions.checkParamArgument(StringUtils.isNotBlank(currentUserId), "用户信息为空");
-        RestPreconditions.checkParamArgument(currentUserId.equals("admin"), "只有管理员能进行注册操作!");
+        RestPreconditions.checkParamArgument(AuthenticationUtil.isAdmin(), "只有管理员能进行操作");
 
         RestPreconditions.checkParamArgument(StringUtils.isNotBlank(user.getCode()), "账号不能为空!");
         RestPreconditions.checkParamArgument(StringUtils.isNotBlank(user.getName()), "用户名不能为空!");

@@ -17,7 +17,7 @@
     <dependencies>
         <dependency>
             <groupId>com.jason.mirageLedger</groupId>
-            <artifactId>mirageLedger-record</artifactId>
+            <artifactId>mirageLedger-course</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
