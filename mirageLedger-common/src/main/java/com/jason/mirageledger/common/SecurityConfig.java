@@ -20,7 +20,7 @@ public class SecurityConfig {
         http
                 .csrf().disable() // 禁用CSRF保护
                 .authorizeRequests()
-                .antMatchers("/user/login").permitAll() // 允许所有用户访问登录接口
+                .antMatchers("/mirageLedger/user/login").permitAll() // 允许所有用户访问登录接口
                 .anyRequest().authenticated() // 其他请求都需要认证
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // 使用无状态会话; 这里不创建会话
