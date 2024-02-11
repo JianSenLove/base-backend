@@ -1,6 +1,7 @@
 package com.jason.mirageledger.common;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -26,17 +27,24 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
-        final String requestTokenHeader = request.getHeader("Authorization");
+        try {
+            final String requestTokenHeader = request.getHeader("Authorization");
 
-        if (StringUtils.isNotBlank(requestTokenHeader)) {
-            String jwtToken = requestTokenHeader.substring(7);
-            String userId = jwtTokenUtil.getUserIdFromToken(jwtToken);
+            if (StringUtils.isNotBlank(requestTokenHeader)) {
+                String jwtToken = requestTokenHeader.substring(7);
+                String userId = jwtTokenUtil.getUserIdFromToken(jwtToken);
 
-            if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null && jwtTokenUtil.validateToken(jwtToken, userId)) {
-                // 配置userId到SecurityContextHolder
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userId, null, new ArrayList<>());
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null && jwtTokenUtil.validateToken(jwtToken, userId)) {
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userId, null, new ArrayList<>());
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                } else {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                    return;
+                }
             }
+        } catch (JwtException e) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+            return;
         }
 
         chain.doFilter(request, response);
