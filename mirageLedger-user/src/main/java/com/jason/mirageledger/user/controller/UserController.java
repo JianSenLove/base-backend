@@ -2,15 +2,14 @@ package com.jason.mirageledger.user.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jason.mirageledger.common.AuthenticationUtil;
 import com.jason.mirageledger.common.JwtTokenUtil;
 import com.jason.mirageledger.common.RestPreconditions;
 import com.jason.mirageledger.user.entity.po.User;
 import com.jason.mirageledger.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -57,5 +56,51 @@ public class UserController {
 
         userService.save(user);
         return user;
+    }
+
+    @PutMapping("/{id}")
+    public User updateUser(@PathVariable("id") String id, @RequestBody User user) {
+
+        RestPreconditions.checkParamArgument(id.equals(AuthenticationUtil.getAuthentication()) || AuthenticationUtil.isAdmin(), "只能修改自己账户的密码", HttpStatus.FORBIDDEN);
+
+        User checkIdUser = userService.getById(id);
+        RestPreconditions.checkParamArgument(checkIdUser != null, "用户不存在!");
+
+        RestPreconditions.checkParamArgument(StringUtils.isNotBlank(user.getName()), "用户名称不能为空!");
+        RestPreconditions.checkParamArgument(StringUtils.isNotBlank(user.getPassword()), "用户密码不能为空!");
+
+        user.setId(id);
+        user.setCode(null);
+        userService.updateById(user);
+        return user;
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteUser(@PathVariable("id") String id) {
+        RestPreconditions.checkParamArgument(AuthenticationUtil.isAdmin(), "只有管理员能进行操作");
+        userService.removeById(id);
+    }
+
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable("id") String id) {
+        RestPreconditions.checkParamArgument(id.equals(AuthenticationUtil.getAuthentication()) || AuthenticationUtil.isAdmin(), "只能查看自己的账户信息", HttpStatus.FORBIDDEN);
+
+        User user = userService.getById(id);
+        RestPreconditions.checkParamArgument(user != null, "用户不存在!");
+        return user;
+    }
+
+    @GetMapping("")
+    public Page<User> getUserPage(@RequestParam(defaultValue = "1") Integer page,
+                                       @RequestParam(defaultValue = "10") Integer rows) {
+
+        RestPreconditions.checkParamArgument(AuthenticationUtil.isAdmin(), "只有管理员能进行操作");
+
+        Page<User> userPage = new Page<>(page, rows);
+        LambdaQueryWrapper<User> UserLambdaQueryWrapper = new LambdaQueryWrapper<>();
+
+        UserLambdaQueryWrapper.orderByDesc(User::getUpdateTime);
+        userService.page(userPage,UserLambdaQueryWrapper);
+        return userPage;
     }
 }
