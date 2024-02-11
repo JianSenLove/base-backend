@@ -27,27 +27,32 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
-        try {
-            final String requestTokenHeader = request.getHeader("Authorization");
+        final String requestTokenHeader = request.getHeader("Authorization");
+        String requestURL = request.getRequestURI();
 
-            if (StringUtils.isNotBlank(requestTokenHeader)) {
+        // 跳过登录接口的JWT验证
+        if ("/mirageLedger/user/login".equals(requestURL)) {
+            chain.doFilter(request, response);
+            return;
+        }
+
+        if (StringUtils.isNotBlank(requestTokenHeader)) {
+            try {
                 String jwtToken = requestTokenHeader.substring(7);
                 String userId = jwtTokenUtil.getUserIdFromToken(jwtToken);
 
                 if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null && jwtTokenUtil.validateToken(jwtToken, userId)) {
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userId, null, new ArrayList<>());
                     SecurityContextHolder.getContext().setAuthentication(authentication);
-                } else {
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
-                    return;
                 }
+            } catch (JwtException e) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid Token");
+                return;
             }
-        } catch (JwtException e) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
-            return;
         }
 
         chain.doFilter(request, response);
     }
 }
+
 
