@@ -1,6 +1,7 @@
 package com.jason.mirageledger.common;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -27,19 +28,31 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         final String requestTokenHeader = request.getHeader("Authorization");
+        String requestURL = request.getRequestURI();
+
+        // 跳过登录接口的JWT验证
+        if ("/mirageLedger/user/login".equals(requestURL)) {
+            chain.doFilter(request, response);
+            return;
+        }
 
         if (StringUtils.isNotBlank(requestTokenHeader)) {
-            String jwtToken = requestTokenHeader.substring(7);
-            String userId = jwtTokenUtil.getUserIdFromToken(jwtToken);
+            try {
+                String jwtToken = requestTokenHeader.substring(7);
+                String userId = jwtTokenUtil.getUserIdFromToken(jwtToken);
 
-            if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null && jwtTokenUtil.validateToken(jwtToken, userId)) {
-                // 配置userId到SecurityContextHolder
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userId, null, new ArrayList<>());
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null && jwtTokenUtil.validateToken(jwtToken, userId)) {
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userId, null, new ArrayList<>());
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            } catch (JwtException e) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid Token");
+                return;
             }
         }
 
         chain.doFilter(request, response);
     }
 }
+
 
