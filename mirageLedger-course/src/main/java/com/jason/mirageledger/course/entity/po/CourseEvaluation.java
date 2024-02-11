@@ -28,6 +28,12 @@ public class CourseEvaluation implements Serializable {
     private String courseId;
 
     /**
+     * 评价类型
+     */
+    @TableField(value = "TYPE_")
+    private String type;
+
+    /**
      * 课程评价分
      */
     @TableField(value = "SCORE_")
