@@ -11,6 +11,8 @@ spring:
 jwt:
   secret: jason
 
+
+
 #logging:
 #  level:
 #    org.springframework.security: DEBUG

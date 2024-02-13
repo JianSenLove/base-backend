@@ -36,3 +36,31 @@ user  用户模块(教师模块)
 ### 用户模块主要内容
 1.用户信息的增删改查
 2.用户的登录注册
+
+
+
+
+
+## 云服务器部署
+
+以下部署都基于docker(centos7)
+没有安装docker见
+[docker-ce镜像_docker-ce下载地址_docker-ce安装教程-阿里巴巴开源镜像站 (aliyun.com)](https://developer.aliyun.com/mirror/docker-ce?spm=a2c6h.13651102.0.0.3e221b11jUhVMy)
+
+
+
+1.部署mysql
+
+```shell
+docker run --name=mysql8 -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 -d mysql:8.0.28
+```
+
+2.创建数据库表
+
+新建数据库，名为evalution
+
+sql文件见根目录下db文件,运行sql文件
+
+3.部署项目后端
+
+4.部署nginx和项目前端
