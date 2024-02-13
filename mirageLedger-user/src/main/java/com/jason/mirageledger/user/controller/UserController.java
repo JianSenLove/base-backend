@@ -92,12 +92,16 @@ public class UserController {
 
     @GetMapping("")
     public Page<User> getUserPage(@RequestParam(defaultValue = "1") Integer page,
-                                       @RequestParam(defaultValue = "10") Integer rows) {
+                                       @RequestParam(defaultValue = "10") Integer rows,
+                                  @RequestParam(required = false) String name) {
 
         RestPreconditions.checkParamArgument(AuthenticationUtil.isAdmin(), "只有管理员能进行操作");
 
         Page<User> userPage = new Page<>(page, rows);
         LambdaQueryWrapper<User> UserLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        if (StringUtils.isNotBlank(name)) {
+            UserLambdaQueryWrapper.like(User::getName, name);
+        }
 
         UserLambdaQueryWrapper.orderByDesc(User::getUpdateTime);
         userService.page(userPage,UserLambdaQueryWrapper);

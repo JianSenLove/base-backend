@@ -56,5 +56,8 @@ public class User implements Serializable {
     private Timestamp updateTime;
 
     @TableField(exist = false)
+    private Boolean state = true;
+
+    @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }
