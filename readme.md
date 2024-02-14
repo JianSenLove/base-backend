@@ -51,8 +51,16 @@ user  用户模块(教师模块)
 
 #### 1.部署mysql
 
+创建卷
+
 ```shell
-docker run --name=mysql8 -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 -d mysql:8.0.28
+docker volume create evaluation_mysql
+```
+
+部署mysql
+
+```shell
+docker run --name=mysql8 -p 3306:3306 -v evaluation_mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 -d mysql:8.0.28
 ```
 
 #### 2.创建数据库表
