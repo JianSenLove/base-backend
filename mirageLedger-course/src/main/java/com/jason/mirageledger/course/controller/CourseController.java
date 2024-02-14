@@ -84,14 +84,18 @@ public class CourseController {
 
     @GetMapping("")
     public Page<Course> getCouresePage(@RequestParam(defaultValue = "1") Integer page,
-                                       @RequestParam(defaultValue = "10") Integer rows) {
+                                       @RequestParam(defaultValue = "10") Integer rows,
+                                       @RequestParam(required = false) String name) {
         Page<Course> coursePage = new Page<>(page, rows);
         LambdaQueryWrapper<Course> courseLambdaQueryWrapper = new LambdaQueryWrapper<>();
         if (!AuthenticationUtil.isAdmin()) {
             courseLambdaQueryWrapper.eq(Course::getUserId, AuthenticationUtil.getAuthentication());
         }
+        if (StringUtils.isNotBlank(name)) {
+            courseLambdaQueryWrapper.like(Course::getName, name);
+        }
         courseLambdaQueryWrapper.orderByDesc(Course::getUpdateTime);
-        courseService.page(coursePage,courseLambdaQueryWrapper);
+        courseService.page(coursePage, courseLambdaQueryWrapper);
         return coursePage;
     }
 }
