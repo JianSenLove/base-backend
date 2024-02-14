@@ -4,15 +4,13 @@ import com.baomidou.mybatisplus.annotation.*;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-
 import lombok.Data;
 
 /**
- * 课程评分表
- *
+ * 课程分析评分表
  * @TableName mirageledger_course_evaluation
  */
-@TableName(value = "mirageledger_course_evaluation")
+@TableName(value ="mirageledger_course_evaluation")
 @Data
 public class CourseEvaluation implements Serializable {
     /**
@@ -28,16 +26,46 @@ public class CourseEvaluation implements Serializable {
     private String courseId;
 
     /**
-     * 评价类型
+     * 用户ID
      */
-    @TableField(value = "TYPE_")
-    private String type;
+    @TableField(value = "USER_ID")
+    private String userId;
 
     /**
-     * 课程评价分
+     * 教学内容评价分
      */
-    @TableField(value = "SCORE_")
-    private Double score;
+    @TableField(value = "TEACHING_CONTENT")
+    private Double teachingContent;
+
+    /**
+     * 教学方法评价分
+     */
+    @TableField(value = "TEACHING_METHOD")
+    private Double teachingMethod;
+
+    /**
+     * 课程管理评价分
+     */
+    @TableField(value = "CURRICULUM_MANAGEMENT")
+    private Double curriculumManagement;
+
+    /**
+     * 课程考核评价分
+     */
+    @TableField(value = "COURSE_ASSESSMENT")
+    private Double courseAssessment;
+
+    /**
+     * 教学态度评价分
+     */
+    @TableField(value = "TEACHING_ATTITUDE")
+    private Double teachingAttitude;
+
+    /**
+     * 学习收获评价分
+     */
+    @TableField(value = "LEARNING_HARVEST")
+    private Double learningHarvest;
 
     /**
      * 创建时间
