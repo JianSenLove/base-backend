@@ -26,6 +26,12 @@ public class User implements Serializable {
     private String code;
 
     /**
+     * 所属院系
+     */
+    @TableField(value = "DEPARTMENT_")
+    private String department;
+
+    /**
      * 账号密码
      */
     @TableField(value = "PASSWORD_")

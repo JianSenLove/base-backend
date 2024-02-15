@@ -7,12 +7,12 @@ import java.sql.Timestamp;
 import lombok.Data;
 
 /**
- * 课程表
- * @TableName mirageledger_course
+ * 课程评价表
+ * @TableName mirageledger_course_comment
  */
-@TableName(value ="mirageledger_course")
+@TableName(value ="mirageledger_course_comment")
 @Data
-public class Course implements Serializable {
+public class CourseComment implements Serializable {
     /**
      * ID
      */
@@ -20,34 +20,16 @@ public class Course implements Serializable {
     private String id;
 
     /**
-     * 课程名称
+     * 课程ID
      */
-    @TableField(value = "NAME_")
-    private String name;
+    @TableField(value = "COURSE_ID")
+    private String courseId;
 
     /**
-     * 用户ID
+     * 课程评价描述
      */
-    @TableField(value = "USER_ID")
-    private String userId;
-
-    /**
-     * 学年
-     */
-    @TableField(value = "YEAR_")
-    private String year;
-
-    /**
-     * 学期
-     */
-    @TableField(value = "TERM_")
-    private String term;
-
-    /**
-     * 课程描述
-     */
-    @TableField(value = "DESC_")
-    private String desc;
+    @TableField(value = "COMMENT_")
+    private String comment;
 
     /**
      * 创建时间

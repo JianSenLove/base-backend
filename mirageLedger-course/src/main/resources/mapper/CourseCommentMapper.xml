@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jason.mirageledger.course.mapper.CourseCommentMapper">
+
+    <resultMap id="BaseResultMap" type="com.jason.mirageledger.course.entity.po.CourseComment">
+            <result property="id" column="ID_" jdbcType="VARCHAR"/>
+            <result property="courseId" column="COURSE_ID" jdbcType="VARCHAR"/>
+            <result property="comment" column="COMMENT_" jdbcType="VARCHAR"/>
+            <result property="createTime" column="CREATE_TIME" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="UPDATE_TIME" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        ID_,COURSE_ID,COMMENT_,
+        CREATE_TIME,UPDATE_TIME
+    </sql>
+
+    <sql id="Column_Left_Join">
+        comment.ID_,comment.COURSE_ID,comment.COMMENT_,
+        comment.CREATE_TIME,comment.UPDATE_TIME
+    </sql>
+
+    <select id="getCourseCommentPage"
+            resultType="com.jason.mirageledger.course.entity.po.CourseComment">
+        select
+        <include refid="Column_Left_Join"/>
+        from mirageledger_course_comment comment left join mirageledger_course course on comment.COURSE_ID = course.ID_
+        where
+        course.ID_ = #{courseId}
+        <if test="userId != null and userId != ''">
+            and course.USER_ID = #{userId}
+        </if>
+        order by comment.UPDATE_TIME desc
+    </select>
+
+
+</mapper>

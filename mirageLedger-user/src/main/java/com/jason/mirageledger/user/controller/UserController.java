@@ -50,6 +50,7 @@ public class UserController {
         RestPreconditions.checkParamArgument(StringUtils.isNotBlank(user.getCode()), "账号不能为空!");
         RestPreconditions.checkParamArgument(StringUtils.isNotBlank(user.getName()), "用户名不能为空!");
         RestPreconditions.checkParamArgument(StringUtils.isNotBlank(user.getPassword()), "密码不能为空!");
+        RestPreconditions.checkParamArgument(StringUtils.isNotBlank(user.getDepartment()), "所属院系不能为空!");
 
         User existUser = userService.getOne(new LambdaQueryWrapper<User>().eq(User::getCode, user.getCode()));
         RestPreconditions.checkParamArgument(existUser == null, "账号已存在!");

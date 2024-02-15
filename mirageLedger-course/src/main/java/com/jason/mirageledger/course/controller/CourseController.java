@@ -24,13 +24,16 @@ public class CourseController {
         RestPreconditions.checkParamArgument(AuthenticationUtil.isAdmin(), "只有管理员能进行操作");
 
         RestPreconditions.checkParamArgument(StringUtils.isNotBlank(course.getName()), "课程名称不能为空!");
+        RestPreconditions.checkParamArgument(StringUtils.isNotBlank(course.getYear()), "课程学年不能为空!");
         RestPreconditions.checkParamArgument(StringUtils.isNotBlank(course.getTerm()), "课程所属学期不能为空!");
         RestPreconditions.checkParamArgument(StringUtils.isNotBlank(course.getUserId()), "课程教师不能为空!");
-        RestPreconditions.checkParamArgument(course.getTerm().matches("\\d{4}\\(上\\)|\\d{4}\\(下\\)"), "课程学期格式不正确!");
+        RestPreconditions.checkParamArgument(course.getYear().matches("\\d{4}-\\d{4}"), "课程学年格式不正确!");
+        RestPreconditions.checkParamArgument(course.getTerm().matches("1|2"), "课程学期格式不正确!");
 
         Course existCourse = courseService.getOne(
                 new LambdaQueryWrapper<Course>()
                         .eq(Course::getName, course.getName())
+                        .eq(Course::getYear, course.getYear())
                         .eq(Course::getTerm, course.getTerm())
                         .eq(Course::getUserId, course.getUserId())
         );
@@ -52,11 +55,13 @@ public class CourseController {
         RestPreconditions.checkParamArgument(StringUtils.isNotBlank(course.getName()), "课程名称不能为空!");
         RestPreconditions.checkParamArgument(StringUtils.isNotBlank(course.getTerm()), "课程所属学期不能为空!");
         RestPreconditions.checkParamArgument(StringUtils.isNotBlank(course.getUserId()), "课程教师不能为空!");
-        RestPreconditions.checkParamArgument(course.getTerm().matches("\\d{4}\\(上\\)|\\d{4}\\(下\\)"), "课程学期格式不正确!");
+        RestPreconditions.checkParamArgument(course.getYear().matches("\\d{4}-\\d{4}"), "课程学年格式不正确!");
+        RestPreconditions.checkParamArgument(course.getTerm().matches("1|2"), "课程学期格式不正确!");
 
         Course existCourse = courseService.getOne(
                 new LambdaQueryWrapper<Course>()
                         .eq(Course::getName, course.getName())
+                        .eq(Course::getYear, course.getYear())
                         .eq(Course::getTerm, course.getTerm())
                         .eq(Course::getUserId, course.getUserId())
         );
