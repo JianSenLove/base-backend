@@ -10,6 +10,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 * @createDate 2024-02-14 23:41:54
 */
 public interface CourseCommentService extends IService<CourseComment> {
-    public Page<CourseComment> getCourseCommentPage(Integer page, Integer rows, String courseName, String userId);
+    public Page<CourseComment> getCourseCommentPage(Integer page, Integer rows, String courseId, String userId);
 
 }

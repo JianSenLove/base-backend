@@ -51,7 +51,7 @@ public class CourseCommentController {
     @GetMapping("")
     public Page<CourseComment> getCourseCommentPage(@RequestParam(defaultValue = "1") Integer page,
                                                     @RequestParam(defaultValue = "10") Integer rows,
-                                                    @RequestParam(required = false) String courseName) {
-        return courseCommentService.getCourseCommentPage(page, rows, courseName, AuthenticationUtil.getAuthentication());
+                                                    @RequestParam String courseId) {
+        return courseCommentService.getCourseCommentPage(page, rows, courseId, AuthenticationUtil.getAuthentication());
     }
 }

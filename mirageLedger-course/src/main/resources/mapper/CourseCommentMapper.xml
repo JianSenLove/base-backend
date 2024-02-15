@@ -28,7 +28,7 @@
         <include refid="Column_Left_Join"/>
         from mirageledger_course_comment comment left join mirageledger_course course on comment.COURSE_ID = course.ID_
         where
-        course.ID_ = #{courseName}
+        course.ID_ = #{courseId}
         <if test="userId != null and userId != ''">
             and course.USER_ID = #{userId}
         </if>

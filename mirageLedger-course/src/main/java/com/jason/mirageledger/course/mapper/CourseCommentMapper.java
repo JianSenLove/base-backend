@@ -12,7 +12,7 @@ import org.apache.ibatis.annotations.Param;
 * @Entity com.jason.mirageledger.course.entity.CourseComment
 */
 public interface CourseCommentMapper extends BaseMapper<CourseComment> {
-    public Page<CourseComment> getCourseCommentPage(Page page, @Param("courseName") String courseName, @Param("userId") String userId);
+    public Page<CourseComment> getCourseCommentPage(Page page, @Param("courseId") String courseId, @Param("userId") String userId);
 }
 
 
