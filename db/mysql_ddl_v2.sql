@@ -14,7 +14,7 @@ INSERT INTO `mirageledger_user` (`ID_`, `NAME_`, `DEPARTMENT_`, `CODE_`, `DESC_`
 DROP TABLE IF EXISTS `mirageledger_course`;
 CREATE TABLE `mirageledger_course`  (
                                         `ID_` varchar(64)   NOT NULL COMMENT 'ID',
-                                        `CODE_` varchar(64)   NOT NULL COMMENT '课程编号',
+                                        `CODE_` varchar(64)   NULL DEFAULT NULL COMMENT '课程编号',
                                         `NAME_` varchar(255)   NOT NULL COMMENT '课程名称',
                                         `USER_ID` varchar(64)   NOT NULL COMMENT '用户ID',
                                         `YEAR_` varchar(64)   NOT NULL COMMENT '学年',
