@@ -26,12 +26,6 @@ public class CourseEvaluation implements Serializable {
     private String courseId;
 
     /**
-     * 用户ID
-     */
-    @TableField(value = "USER_ID")
-    private String userId;
-
-    /**
      * 教学内容评价分
      */
     @TableField(value = "TEACHING_CONTENT")

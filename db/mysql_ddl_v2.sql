@@ -28,7 +28,6 @@ DROP TABLE IF EXISTS `mirageledger_course_evaluation`;
 CREATE TABLE `mirageledger_course_evaluation`  (
                                                    `ID_` varchar(64)   NOT NULL COMMENT 'ID',
                                                    `COURSE_ID` varchar(64)   NOT NULL  COMMENT '课程ID',
-                                                   `USER_ID` varchar(64)   NOT NULL COMMENT '用户ID',
                                                    `TEACHING_CONTENT` DOUBLE NULL DEFAULT NULL COMMENT '教学内容评价分',
                                                    `TEACHING_METHOD` DOUBLE NULL DEFAULT NULL COMMENT '教学方法评价分',
                                                    `CURRICULUM_MANAGEMENT` DOUBLE NULL DEFAULT NULL COMMENT '课程管理评价分',
