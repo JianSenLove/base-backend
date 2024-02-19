@@ -50,6 +50,12 @@ public class Course implements Serializable {
     private String desc;
 
     /**
+     * 课程状态
+     */
+    @TableField(exist = false)
+    private Boolean state = true;
+
+    /**
      * 创建时间
      */
     @TableField(value = "CREATE_TIME", fill = FieldFill.INSERT)

@@ -1,9 +1,11 @@
 package com.jason.mirageledger.course.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jason.mirageledger.common.AuthenticationUtil;
 import com.jason.mirageledger.common.RestPreconditions;
+import com.jason.mirageledger.course.entity.dto.CourseEvaluationDTO;
 import com.jason.mirageledger.course.entity.po.CourseEvaluation;
 import com.jason.mirageledger.course.entity.po.Course;
 import com.jason.mirageledger.course.service.CourseEvaluationService;
@@ -30,6 +32,10 @@ public class CourseEvaluationController {
         RestPreconditions.checkParamArgument(StringUtils.isNotBlank(courseEvaluation.getCourseId()), "课程ID不能为空", HttpStatus.BAD_REQUEST);
         Course course = courseService.getById(courseEvaluation.getCourseId());
         RestPreconditions.checkParamArgument(course != null, "课程不存在!");
+
+        //查询是否已有该课程ID的evaluation
+        CourseEvaluation existCourseEvaluation = courseEvaluationService.getOne(new LambdaQueryWrapper<CourseEvaluation>().eq(CourseEvaluation::getCourseId, courseEvaluation.getCourseId()));
+        RestPreconditions.checkParamArgument(existCourseEvaluation == null, "该课程ID已存在评价!", HttpStatus.BAD_REQUEST);
 
         courseEvaluationService.save(courseEvaluation);
         return courseEvaluation;
@@ -66,9 +72,18 @@ public class CourseEvaluationController {
     }
 
     @GetMapping("")
-    public Page<CourseEvaluation> getCoureseEvaluationPage(@RequestParam(defaultValue = "1") Integer page,
-                                                           @RequestParam(defaultValue = "10") Integer rows,
-                                                           @RequestParam(required = false) String courseName) {
+    public Page<CourseEvaluationDTO> getCoureseEvaluationPage(@RequestParam(defaultValue = "1") Integer page,
+                                                              @RequestParam(defaultValue = "10") Integer rows,
+                                                              @RequestParam(required = false) String courseName) {
+        if (AuthenticationUtil.isAdmin()) {
+            return courseEvaluationService.getCourseEvaluationPage(page, rows, courseName, null);
+        }
         return courseEvaluationService.getCourseEvaluationPage(page, rows, courseName, AuthenticationUtil.getAuthentication());
+    }
+
+    @GetMapping("/exist/{courseId}")
+    public Boolean isExistCourseEvaluation(@PathVariable String courseId) {
+        CourseEvaluation existCourseEvaluation = courseEvaluationService.getOne(new LambdaQueryWrapper<CourseEvaluation>().eq(CourseEvaluation::getCourseId, courseId));
+        return existCourseEvaluation != null;
     }
 }

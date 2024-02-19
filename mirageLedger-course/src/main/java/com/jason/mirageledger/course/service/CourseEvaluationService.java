@@ -1,6 +1,7 @@
 package com.jason.mirageledger.course.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jason.mirageledger.course.entity.dto.CourseEvaluationDTO;
 import com.jason.mirageledger.course.entity.po.CourseEvaluation;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -13,5 +14,5 @@ public interface CourseEvaluationService extends IService<CourseEvaluation> {
 
     public CourseEvaluation getCourseEvaluationByIdAndUserId(String id, String userId);
 
-    public Page<CourseEvaluation> getCourseEvaluationPage(Integer page, Integer rows, String courseName, String userId);
+    public Page<CourseEvaluationDTO> getCourseEvaluationPage(Integer page, Integer rows, String courseName, String userId);
 }
