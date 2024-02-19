@@ -19,14 +19,14 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        ID_,COURSE_ID,USER_ID,
+        ID_,COURSE_ID,
         TEACHING_CONTENT,TEACHING_METHOD,CURRICULUM_MANAGEMENT,
         COURSE_ASSESSMENT,TEACHING_ATTITUDE,LEARNING_HARVEST,
         CREATE_TIME,UPDATE_TIME
     </sql>
 
     <sql id="Column_Left_Join">
-        eva.ID_,eva.COURSE_ID,eva.USER_ID,
+        eva.ID_,eva.COURSE_ID,
         eva.TEACHING_CONTENT,eva.TEACHING_METHOD,eva.CURRICULUM_MANAGEMENT,
         eva.COURSE_ASSESSMENT,eva.TEACHING_ATTITUDE,eva.LEARNING_HARVEST,
         eva.CREATE_TIME,eva.UPDATE_TIME

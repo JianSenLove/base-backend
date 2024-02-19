@@ -60,7 +60,7 @@ docker volume create evaluation_mysql
 部署mysql
 
 ```shell
-docker run --name=mysql8 -p 3306:3306 -v evaluation_mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 -d mysql:8.0.28
+docker run --name=mysql8 -p 3306:3306 -v evaluation_mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=mirage666666 -d mysql:8.0.28
 docker update -m 500M --memory-reservation 500M --memory-swap 1000M mysql8
 ```
 

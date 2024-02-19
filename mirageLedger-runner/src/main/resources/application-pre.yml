@@ -6,7 +6,7 @@ spring:
     url: jdbc:mysql://193.112.179.102:3306/evaluation?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: 123456
+    password: mirage666666
 
 jason:
   imagepath: /home/imageresource/

@@ -6,7 +6,7 @@ spring:
     url: jdbc:mysql:///evaluation?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: 123456
+    password: mirage666666
 
 jwt:
   secret: jason
