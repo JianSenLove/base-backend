@@ -67,9 +67,8 @@ public class UserController {
         User checkIdUser = userService.getById(id);
         RestPreconditions.checkParamArgument(checkIdUser != null, "用户不存在!");
 
-        RestPreconditions.checkParamArgument(StringUtils.isNotBlank(user.getName()), "用户名称不能为空!");
-        RestPreconditions.checkParamArgument(StringUtils.isNotBlank(user.getPassword()), "用户密码不能为空!");
-
+        if (StringUtils.isBlank(user.getName())) user.setName(null);
+        if (StringUtils.isBlank(user.getPassword())) user.setPassword(null);
         user.setId(id);
         user.setCode(null);
         userService.updateById(user);
@@ -107,5 +106,14 @@ public class UserController {
         UserLambdaQueryWrapper.orderByDesc(User::getUpdateTime);
         userService.page(userPage,UserLambdaQueryWrapper);
         return userPage;
+    }
+
+    //根据code获取用户接口
+    @GetMapping("/code/{code}")
+    public User getUserByCode(@PathVariable("code") String code) {
+        User user = userService.getOne(new LambdaQueryWrapper<User>().eq(User::getCode, code));
+        RestPreconditions.checkParamArgument(user != null, "用户不存在!");
+        RestPreconditions.checkParamArgument(user.getId().equals(AuthenticationUtil.getAuthentication()) || AuthenticationUtil.isAdmin(), "只能查看自己的账户信息", HttpStatus.FORBIDDEN);
+        return user;
     }
 }
