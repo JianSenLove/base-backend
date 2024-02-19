@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS `mirageledger_user`;
 CREATE TABLE `mirageledger_user`  (
-                                      `ID_` varchar(64)   NOT NULL COMMENT 'ID',
+                                      `ID_` varchar(64)  PRIMARY KEY NOT NULL COMMENT 'ID',
                                       `NAME_` varchar(255)   NOT NULL COMMENT '用户名称',
                                       `DEPARTMENT_` varchar(64)   NOT NULL COMMENT '所属院系',
                                       `CODE_` varchar(64)   NOT NULL COMMENT '登录账号',
@@ -13,7 +13,7 @@ INSERT INTO `mirageledger_user` (`ID_`, `NAME_`, `DEPARTMENT_`, `CODE_`, `DESC_`
 
 DROP TABLE IF EXISTS `mirageledger_course`;
 CREATE TABLE `mirageledger_course`  (
-                                        `ID_` varchar(64)   NOT NULL COMMENT 'ID',
+                                        `ID_` varchar(64)  PRIMARY KEY NOT NULL COMMENT 'ID',
                                         `CODE_` varchar(64)   NULL DEFAULT NULL COMMENT '课程编号',
                                         `NAME_` varchar(255)   NOT NULL COMMENT '课程名称',
                                         `USER_ID` varchar(64)   NOT NULL COMMENT '用户ID',
@@ -26,8 +26,9 @@ CREATE TABLE `mirageledger_course`  (
 
 DROP TABLE IF EXISTS `mirageledger_course_evaluation`;
 CREATE TABLE `mirageledger_course_evaluation`  (
-                                                   `ID_` varchar(64)   NOT NULL COMMENT 'ID',
+                                                   `ID_` varchar(64) PRIMARY KEY  NOT NULL COMMENT 'ID',
                                                    `COURSE_ID` varchar(64)   NOT NULL  COMMENT '课程ID',
+                                                   `USER_ID` varchar(64)   NOT NULL COMMENT '用户ID',
                                                    `TEACHING_CONTENT` DOUBLE NULL DEFAULT NULL COMMENT '教学内容评价分',
                                                    `TEACHING_METHOD` DOUBLE NULL DEFAULT NULL COMMENT '教学方法评价分',
                                                    `CURRICULUM_MANAGEMENT` DOUBLE NULL DEFAULT NULL COMMENT '课程管理评价分',
@@ -40,7 +41,7 @@ CREATE TABLE `mirageledger_course_evaluation`  (
 
 DROP TABLE IF EXISTS `mirageledger_course_comment`;
 CREATE TABLE `mirageledger_course_comment`  (
-                                                `ID_` varchar(64)   NOT NULL COMMENT 'ID',
+                                                `ID_` varchar(64)  PRIMARY KEY NOT NULL COMMENT 'ID',
                                                 `COURSE_ID` varchar(64)   NOT NULL  COMMENT '课程ID',
                                                 `COMMENT_` varchar(255)   NULL DEFAULT NULL COMMENT '课程评价描述',
                                                 `CREATE_TIME` timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
