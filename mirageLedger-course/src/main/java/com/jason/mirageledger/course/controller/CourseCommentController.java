@@ -52,6 +52,9 @@ public class CourseCommentController {
     public Page<CourseComment> getCourseCommentPage(@RequestParam(defaultValue = "1") Integer page,
                                                     @RequestParam(defaultValue = "10") Integer rows,
                                                     @RequestParam String courseId) {
+        if (AuthenticationUtil.isAdmin()) {
+            return courseCommentService.getCourseCommentPage(page, rows, courseId, null);
+        }
         return courseCommentService.getCourseCommentPage(page, rows, courseId, AuthenticationUtil.getAuthentication());
     }
 }

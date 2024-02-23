@@ -38,7 +38,9 @@
         <include refid="Column_Left_Join"/>
         from mirageledger_course_evaluation eva left join mirageledger_course course on eva.COURSE_ID = course.ID_
         where eva.ID_ = #{id}
-        and course.USER_ID = #{userId}
+        <if test="userId != null and userId != ''">
+            and course.USER_ID = #{userId}
+        </if>
     </select>
 
     <select id="getCourseEvaluationPage"
@@ -49,7 +51,7 @@
         where
         1=1
         <if test="userId != null and userId != ''">
-            course.USER_ID = #{userId}
+            and course.USER_ID = #{userId}
         </if>
         <if test="courseName != null and courseName != ''">
             and course.NAME_ like concat('%',#{courseName},'%')

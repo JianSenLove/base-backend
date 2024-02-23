@@ -65,8 +65,12 @@ public class CourseEvaluationController {
 
     @GetMapping("/{id}")
     public CourseEvaluation getCourseEvaluation(@PathVariable String id) {
-
-        CourseEvaluation courseEvaluation = courseEvaluationService.getCourseEvaluationByIdAndUserId(id, AuthenticationUtil.getAuthentication());
+        CourseEvaluation courseEvaluation;
+        if (AuthenticationUtil.isAdmin()) {
+            courseEvaluation = courseEvaluationService.getCourseEvaluationByIdAndUserId(id, null);
+        } else {
+            courseEvaluation = courseEvaluationService.getCourseEvaluationByIdAndUserId(id, AuthenticationUtil.getAuthentication());
+        }
         RestPreconditions.checkParamArgument(courseEvaluation != null, "课程评价不存在!");
         return courseEvaluation;
     }
