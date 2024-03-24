@@ -20,16 +20,10 @@ public class User implements Serializable {
     private String id;
 
     /**
-     * 用户登录账号(工号)
+     * 用户登录账号
      */
     @TableField(value = "CODE_")
     private String code;
-
-    /**
-     * 所属院系
-     */
-    @TableField(value = "DEPARTMENT_")
-    private String department;
 
     /**
      * 账号密码

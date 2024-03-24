@@ -26,7 +26,7 @@ public class UserController {
     private JwtTokenUtil jwtTokenUtil;
 
     @PostMapping("/login")
-    public Map<String, String> userLogin(@RequestBody User user) {
+    public Map<String, Object> userLogin(@RequestBody User user) {
 
         RestPreconditions.checkParamArgument(StringUtils.isNotBlank(user.getCode()) || StringUtils.isNotBlank(user.getPassword()), "账号或密码为空!");
 
@@ -37,8 +37,9 @@ public class UserController {
         RestPreconditions.checkParamArgument(one.getPassword().equals(user.getPassword()), "密码不正确");
 
         final String token = jwtTokenUtil.generateToken(one.getId());
-        Map<String, String> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         map.put("token", token);
+        map.put("userInfo", one);
         return map;
     }
 
@@ -50,7 +51,6 @@ public class UserController {
         RestPreconditions.checkParamArgument(StringUtils.isNotBlank(user.getCode()), "账号不能为空!");
         RestPreconditions.checkParamArgument(StringUtils.isNotBlank(user.getName()), "用户名不能为空!");
         RestPreconditions.checkParamArgument(StringUtils.isNotBlank(user.getPassword()), "密码不能为空!");
-        RestPreconditions.checkParamArgument(StringUtils.isNotBlank(user.getDepartment()), "所属院系不能为空!");
 
         User existUser = userService.getOne(new LambdaQueryWrapper<User>().eq(User::getCode, user.getCode()));
         RestPreconditions.checkParamArgument(existUser == null, "账号已存在!");
