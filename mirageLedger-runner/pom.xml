@@ -21,6 +21,10 @@
             <artifactId>mirageLedger-user</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.jason.mirageLedger</groupId>
+            <artifactId>mirageLedger-shop</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

@@ -19,6 +19,7 @@
         <module>mirageLedger-user</module>
         <module>mirageLedger-runner</module>
         <module>mirageLedger-common</module>
+        <module>mirageLedger-shop</module>
     </modules>
 
     <properties>

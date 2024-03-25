@@ -25,6 +25,8 @@ public class CustomMetaObjectHandler implements MetaObjectHandler {
         Timestamp currentTime = new Timestamp(System.currentTimeMillis());
         this.strictInsertFill(metaObject, "createTime", Timestamp.class, currentTime); // 使用strictInsertFill确保类型安全
         this.strictInsertFill(metaObject, "updateTime", Timestamp.class, currentTime);
+        String userId = AuthenticationUtil.getAuthentication();
+        this.strictInsertFill(metaObject, "userId", String.class, userId);
     }
 
 
