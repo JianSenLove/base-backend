@@ -13,12 +13,20 @@ CREATE TABLE mirageledger_product (
                                       NAME_ varchar(255) NOT NULL COMMENT '商品名称',
                                       CATEGORY_ID varchar(64) NOT NULL COMMENT '类别ID',
                                       PRICE_ double NOT NULL COMMENT '商品价格',
-                                      STOCK int NOT NULL COMMENT '商品库存',
+                                      STOCK_ int NOT NULL COMMENT '商品库存',
                                       USER_ID varchar(64) NOT NULL COMMENT '用户ID',
                                       DESC_ varchar(255) NULL DEFAULT NULL COMMENT '商品描述',
                                       CREATE_TIME_ timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
                                       UPDATE_TIME_ timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
 ) COMMENT = '商品信息表';
+
+CREATE TABLE mirageledger_category (
+                                       ID_ varchar(64) PRIMARY KEY NOT NULL COMMENT 'ID',
+                                       NAME_ varchar(255) NOT NULL COMMENT '类别名称',
+                                       DESC_ varchar(255) NULL DEFAULT NULL COMMENT '描述',
+                                       CREATE_TIME_ timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
+                                       UPDATE_TIME_ timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
+) COMMENT = '商品类别表';
 
 CREATE TABLE mirageledger_cart (
                                    ID_ varchar(64) PRIMARY KEY NOT NULL COMMENT 'ID',
@@ -33,6 +41,7 @@ CREATE TABLE mirageledger_view_history (
                                            ID_ varchar(64) PRIMARY KEY NOT NULL COMMENT 'ID',
                                            USER_ID varchar(64) NOT NULL COMMENT '用户ID',
                                            PRODUCT_ID varchar(64) NOT NULL COMMENT '商品ID',
+                                           COUNT_ int NOT NULL COMMENT '浏览次数',
                                            CREATE_TIME_ timestamp NOT NULL COMMENT '创建时间'
 ) COMMENT = '用户商品浏览记录表';
 
