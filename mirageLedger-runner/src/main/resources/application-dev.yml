@@ -16,7 +16,9 @@ jwt:
   secret: jason
 
 file:
-  upload-dir: C:/Users/Public/Desktop/
+  upload-dir: C:/my_project/flower-shop/flower_image/
+
+baseImagePath: http://localhost:8081/mirageLedger/image/view/
 
 
 

@@ -8,6 +8,7 @@ import com.jason.mirageledger.common.RestPreconditions;
 import com.jason.mirageledger.shop.entity.Product;
 import com.jason.mirageledger.shop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +21,9 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
+
+    @Value("${baseImagePath}")
+    private String baseImagePath;
 
     @PostMapping("")
     public Product createDatabaseInfo(@RequestBody Product product) {
@@ -70,21 +74,30 @@ public class ProductController {
 
     @GetMapping("")
     public Page<Product> getProductsPage(
-            @RequestParam(value = "page", defaultValue = "1") int currentPage,
-            @RequestParam(value = "rows", defaultValue = "10") int size,
+            @RequestParam(value = "page", defaultValue = "1") Integer currentPage,
+            @RequestParam(value = "rows", defaultValue = "10") Integer size,
             @RequestParam(value = "name", required = false) String name) {
         LambdaQueryWrapper<Product> queryWrapper = new LambdaQueryWrapper<>();
         if (name != null && !name.trim().isEmpty()) {
             queryWrapper.like(Product::getName, name);
         }
 
-        return productService.page(new Page<>(currentPage, size), queryWrapper);
+        Page<Product> page = productService.page(new Page<>(currentPage, size), queryWrapper);
+
+        page.getRecords().forEach(product -> {
+            String imagePath = baseImagePath + product.getId() + ".jpg";
+            product.setImage(imagePath);
+        });
+
+        return page;
     }
 
     @GetMapping("/{id}")
     public Product getProductDetail(@PathVariable String id) {
         Product product = productService.getById(id);
         RestPreconditions.checkParamArgument(product != null, "商品信息未找到", HttpStatus.NOT_FOUND);
+        String imagePath = baseImagePath + product.getId() + ".jpg";
+        product.setImage(imagePath);
         return product;
     }
 

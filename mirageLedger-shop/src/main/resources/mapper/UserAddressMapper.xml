@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jason.mirageledger.shop.mapper.UserAddressMapper">
+
+    <resultMap id="BaseResultMap" type="com.jason.mirageledger.shop.entity.UserAddress">
+            <id property="id" column="ID_" jdbcType="VARCHAR"/>
+            <result property="userId" column="USER_ID" jdbcType="VARCHAR"/>
+            <result property="address" column="ADDRESS_" jdbcType="VARCHAR"/>
+            <result property="city" column="CITY_" jdbcType="VARCHAR"/>
+            <result property="state" column="STATE_" jdbcType="VARCHAR"/>
+            <result property="country" column="COUNTRY_" jdbcType="VARCHAR"/>
+            <result property="zipCode" column="ZIP_CODE" jdbcType="VARCHAR"/>
+            <result property="createTime" column="CREATE_TIME" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="UPDATE_TIME" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        ID_,USER_ID,ADDRESS_,
+        CITY_,STATE_,COUNTRY_,
+        ZIP_CODE,CREATE_TIME,UPDATE_TIME
+    </sql>
+</mapper>

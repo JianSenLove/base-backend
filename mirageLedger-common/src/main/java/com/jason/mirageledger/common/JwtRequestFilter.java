@@ -36,6 +36,18 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             return;
         }
 
+        // 跳过注册接口的JWT验证
+        if ("/mirageLedger/user/register".equals(requestURL)) {
+            chain.doFilter(request, response);
+            return;
+        }
+
+        // 跳过图片获取接口的验证
+        if (requestURL.contains("/mirageLedger/image")) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         if (StringUtils.isNotBlank(requestTokenHeader)) {
             try {
                 String jwtToken = requestTokenHeader.substring(7);

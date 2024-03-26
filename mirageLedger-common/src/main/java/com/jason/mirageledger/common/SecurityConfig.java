@@ -27,6 +27,8 @@ public class SecurityConfig {
                 .csrf().disable() // 禁用CSRF保护
                 .authorizeRequests()
                 .antMatchers("/mirageLedger/user/login").permitAll() // 允许所有用户访问登录接口
+                .antMatchers("/mirageLedger/image/view/{imageName:.+}").permitAll() // 允许所有用户访问图片上传下载接口
+                .antMatchers("/mirageLedger/user/register").permitAll() // 允许所有用户访问注册接口
                 .anyRequest().authenticated() // 其他请求都需要认证
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // 使用无状态会话; 这里不创建会话

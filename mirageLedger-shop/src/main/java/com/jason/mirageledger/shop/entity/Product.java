@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * 商品信息表
@@ -41,7 +42,7 @@ public class Product implements Serializable {
     /**
      * 商品库存
      */
-    @TableField(value = "STOCK")
+    @TableField(value = "STOCK_")
     private Integer stock;
 
     /**
@@ -67,6 +68,13 @@ public class Product implements Serializable {
      */
     @TableField(value = "UPDATE_TIME", fill = FieldFill.INSERT_UPDATE)
     private Timestamp updateTime;
+
+    /**
+     * 图片请求路径
+     */
+    @TableField(exist = false)
+    private String image;
+
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
