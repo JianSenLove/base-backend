@@ -3,6 +3,7 @@ package com.jason.mirageledger.shop.controller;
 import com.jason.mirageledger.common.AuthenticationUtil;
 import com.jason.mirageledger.common.RestPreconditions;
 import com.jason.mirageledger.shop.entity.Order;
+import com.jason.mirageledger.shop.service.OrderProductService;
 import com.jason.mirageledger.shop.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,14 +19,27 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private OrderProductService orderProductService;
+
     // 创建订单
     @PostMapping("")
     public Order createOrder(@RequestBody Order order) {
-        RestPreconditions.checkParamArgument(order.getUserId() != null, "用户ID不能为空", HttpStatus.BAD_REQUEST);
         RestPreconditions.checkParamArgument(order.getOrderPrice() != null && order.getOrderPrice() > 0, "订单总金额必须大于0", HttpStatus.BAD_REQUEST);
+        RestPreconditions.checkParamArgument(order.getOrderProducts() != null && !order.getOrderProducts().isEmpty(), "订单商品不能为空", HttpStatus.BAD_REQUEST);
 
         // 保存Order对象到数据库
         orderService.save(order);
+
+        // 保存订单商品信息
+        // 设置订单商品信息的订单ID
+        order.getOrderProducts().forEach(orderProduct -> {
+            orderProduct.setOrderId(order.getId());
+            orderProduct.setTotalPrice(orderProduct.getPrice() * orderProduct.getNum());
+            orderProduct.setCreateTime(null);
+            orderProduct.setUpdateTime(null);
+        });
+        orderProductService.saveBatch(order.getOrderProducts());
         return order;
     }
 

@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
+
 import lombok.Data;
 
 /**
@@ -37,6 +39,9 @@ public class Order implements Serializable {
      */
     @TableField(value = "STATUS_")
     private String status;
+
+    @TableField(exist = false)
+    private List<OrderProduct> orderProducts;
 
     /**
      * 创建时间

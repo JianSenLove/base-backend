@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.annotation.*;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.Date;
+
 import lombok.Data;
 
 /**
@@ -36,7 +36,7 @@ public class OrderProduct implements Serializable {
      * 数量
      */
     @TableField(value = "QUANTITY_")
-    private Integer quantity;
+    private Integer num;
 
     /**
      * 商品单价
