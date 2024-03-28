@@ -3,8 +3,11 @@ package com.jason.mirageledger.shop.controller;
 import com.jason.mirageledger.common.AuthenticationUtil;
 import com.jason.mirageledger.common.RestPreconditions;
 import com.jason.mirageledger.shop.entity.Cart;
+import com.jason.mirageledger.shop.entity.Product;
 import com.jason.mirageledger.shop.service.CartService;
+import com.jason.mirageledger.shop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -16,6 +19,12 @@ public class CartController {
 
     @Autowired
     private CartService cartService;
+
+    @Autowired
+    private ProductService productService;
+
+    @Value("${baseImagePath}")
+    private String baseImagePath;
 
     // 添加商品到购物车
     @PostMapping("")
@@ -55,7 +64,15 @@ public class CartController {
         LambdaQueryWrapper<Cart> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Cart::getUserId, userId);
 
-        return cartService.page(new Page<>(currentPage, size), queryWrapper);
+        Page<Cart> cartPage = cartService.page(new Page<>(currentPage, size), queryWrapper);
+
+        cartPage.getRecords().forEach(cart -> {
+            Product product =  productService.getById(cart.getProductId());
+            cart.setProductName(product.getName());
+            cart.setPrice(product.getPrice());
+            cart.setImage(baseImagePath + cart.getProductId() + ".jpg");
+        });
+        return cartPage;
     }
 }
 

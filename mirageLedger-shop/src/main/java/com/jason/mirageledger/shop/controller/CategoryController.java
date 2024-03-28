@@ -3,8 +3,11 @@ package com.jason.mirageledger.shop.controller;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.jason.mirageledger.common.RestPreconditions;
 import com.jason.mirageledger.shop.entity.Category;
+import com.jason.mirageledger.shop.entity.Product;
 import com.jason.mirageledger.shop.service.CategoryService;
+import com.jason.mirageledger.shop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -15,6 +18,12 @@ public class CategoryController {
 
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private ProductService productService;
+
+    @Value("${baseImagePath}")
+    private String baseImagePath;
 
     // 创建新的类别
     @PostMapping("")
@@ -58,7 +67,18 @@ public class CategoryController {
     public Page<Category> getCategoriesPage(
             @RequestParam(value = "page", defaultValue = "1") int currentPage,
             @RequestParam(value = "rows", defaultValue = "10") int size) {
-        return categoryService.page(new Page<>(currentPage, size));
+        Page<Category> categoryPage = categoryService.page(new Page<>(currentPage, size));
+        // 查出分类下的商品,并为每个商品配置image
+        categoryPage.getRecords().forEach(category -> {
+            Page<Product> productPage = productService.lambdaQuery()
+                    .eq(Product::getCategoryId, category.getId())
+                    .page(new Page<>(1, 10));
+            category.setProducts(productPage.getRecords());
+            category.getProducts().forEach(product -> {
+                product.setImage(baseImagePath + product.getId() + ".jpg");
+            });
+        });
+        return categoryPage;
     }
 
 }

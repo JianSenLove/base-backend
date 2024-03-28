@@ -32,11 +32,20 @@ public class Cart implements Serializable {
     @TableField(value = "PRODUCT_ID")
     private String productId;
 
+    @TableField(exist = false)
+    private String productName;
+
+    @TableField(exist = false)
+    private Double price;
+
+    @TableField(exist = false)
+    private String image;
+
     /**
      * 数量
      */
     @TableField(value = "QUANTITY_")
-    private Integer quantity;
+    private Integer num;
 
     /**
      * 创建时间

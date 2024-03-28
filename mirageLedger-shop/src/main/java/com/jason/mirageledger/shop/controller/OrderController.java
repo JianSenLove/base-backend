@@ -1,15 +1,21 @@
 package com.jason.mirageledger.shop.controller;
 
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.jason.mirageledger.common.AuthenticationUtil;
 import com.jason.mirageledger.common.RestPreconditions;
 import com.jason.mirageledger.shop.entity.Order;
+import com.jason.mirageledger.shop.entity.OrderProduct;
 import com.jason.mirageledger.shop.service.OrderProductService;
 import com.jason.mirageledger.shop.service.OrderService;
+import com.jason.mirageledger.shop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+
+import java.util.List;
 
 
 @RestController
@@ -20,7 +26,13 @@ public class OrderController {
     private OrderService orderService;
 
     @Autowired
+    private ProductService productService;
+
+    @Autowired
     private OrderProductService orderProductService;
+
+    @Value("${baseImagePath}")
+    private String baseImagePath;
 
     // 创建订单
     @PostMapping("")
@@ -69,6 +81,12 @@ public class OrderController {
     public Order getOrderDetail(@PathVariable String id) {
         Order order = orderService.getById(id);
         RestPreconditions.checkParamArgument(order != null, "订单未找到", HttpStatus.NOT_FOUND);
+        List<OrderProduct> orderProducts = orderProductService.lambdaQuery().eq(OrderProduct::getOrderId, id).list();
+        // 为每个订单商品设置图片
+        orderProducts.forEach(orderProduct -> {
+            orderProduct.setImage(baseImagePath + orderProduct.getProductId() + ".jpg");
+            orderProduct.setProductName(productService.getById(orderProduct.getProductId()).getName());
+        });
         return order;
     }
 
@@ -76,14 +94,26 @@ public class OrderController {
     @GetMapping("")
     public Page<Order> getOrdersPage(
             @RequestParam(value = "page", defaultValue = "1") int currentPage,
-            @RequestParam(value = "rows", defaultValue = "10") int size) {
+            @RequestParam(value = "rows", defaultValue = "10") int size,
+            @RequestParam(value = "status", required = false) String status) {
         LambdaQueryWrapper<Order> queryWrapper = new LambdaQueryWrapper<>();
         String userId = AuthenticationUtil.getAuthentication();
-        if (userId != null && !userId.trim().isEmpty()) {
+        if (StringUtils.isNotBlank(userId)) {
             queryWrapper.eq(Order::getUserId, userId);
         }
-
-        return orderService.page(new Page<>(currentPage, size), queryWrapper);
+        if (StringUtils.isNotBlank(status)) {
+            queryWrapper.eq(Order::getStatus, status);
+        }
+        Page<Order> orderPage = orderService.page(new Page<>(currentPage, size), queryWrapper);
+        orderPage.getRecords().forEach(order -> {
+            List<OrderProduct> orderProducts = orderProductService.lambdaQuery().eq(OrderProduct::getOrderId, order.getId()).list();
+            orderProducts.forEach(orderProduct -> {
+                orderProduct.setImage(baseImagePath + orderProduct.getProductId() + ".jpg");
+                orderProduct.setProductName(productService.getById(orderProduct.getProductId()).getName());
+            });
+            order.setOrderProducts(orderProducts);
+        });
+        return orderPage;
     }
 
 }

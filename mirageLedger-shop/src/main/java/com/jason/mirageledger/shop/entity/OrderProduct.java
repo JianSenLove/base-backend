@@ -32,6 +32,9 @@ public class OrderProduct implements Serializable {
     @TableField(value = "PRODUCT_ID")
     private String productId;
 
+    @TableField(exist = false)
+    private String productName;
+
     /**
      * 数量
      */
@@ -49,6 +52,9 @@ public class OrderProduct implements Serializable {
      */
     @TableField(value = "TOTAL_PRICE")
     private Double totalPrice;
+
+    @TableField(exist = false)
+    private String image;
 
     /**
      * 创建时间
