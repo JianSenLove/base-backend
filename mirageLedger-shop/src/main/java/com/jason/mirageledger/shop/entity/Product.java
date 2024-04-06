@@ -34,6 +34,12 @@ public class Product implements Serializable {
     private String categoryId;
 
     /**
+     * 类别名称
+     */
+    @TableField(exist = false)
+    private String categoryName;
+
+    /**
      * 商品价格
      */
     @TableField(value = "PRICE_")

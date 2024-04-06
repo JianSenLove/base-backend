@@ -1,5 +1,6 @@
 package com.jason.mirageledger.shop.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.jason.mirageledger.common.RestPreconditions;
 import com.jason.mirageledger.shop.entity.Category;
@@ -66,8 +67,13 @@ public class CategoryController {
     @GetMapping("")
     public Page<Category> getCategoriesPage(
             @RequestParam(value = "page", defaultValue = "1") int currentPage,
-            @RequestParam(value = "rows", defaultValue = "10") int size) {
-        Page<Category> categoryPage = categoryService.page(new Page<>(currentPage, size));
+            @RequestParam(value = "rows", defaultValue = "10") int size,
+            @RequestParam(value = "name", required = false) String name) {
+        LambdaQueryWrapper<Category> categoryLambdaQueryWrapper = new LambdaQueryWrapper<Category>().orderByDesc(Category::getUpdateTime);
+        if (StringUtils.isNotBlank(name)) {
+            categoryLambdaQueryWrapper.like(Category::getName, name);
+        }
+        Page<Category> categoryPage = categoryService.page(new Page<>(currentPage, size), categoryLambdaQueryWrapper);
         // 查出分类下的商品,并为每个商品配置image
         categoryPage.getRecords().forEach(category -> {
             Page<Product> productPage = productService.lambdaQuery()
