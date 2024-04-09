@@ -10,6 +10,7 @@ import com.jason.mirageledger.shop.service.OrderService;
 import com.jason.mirageledger.shop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -36,6 +37,7 @@ public class OrderController {
 
     // 创建订单
     @PostMapping("")
+    @Transactional(rollbackFor = Exception.class)
     public Order createOrder(@RequestBody Order order) {
         RestPreconditions.checkParamArgument(order.getOrderPrice() != null && order.getOrderPrice() > 0, "订单总金额必须大于0", HttpStatus.BAD_REQUEST);
         RestPreconditions.checkParamArgument(order.getOrderProducts() != null && !order.getOrderProducts().isEmpty(), "订单商品不能为空", HttpStatus.BAD_REQUEST);
@@ -46,6 +48,7 @@ public class OrderController {
         // 保存订单商品信息
         // 设置订单商品信息的订单ID
         order.getOrderProducts().forEach(orderProduct -> {
+            orderProduct.setId(null);
             orderProduct.setOrderId(order.getId());
             orderProduct.setTotalPrice(orderProduct.getPrice() * orderProduct.getNum());
             orderProduct.setCreateTime(null);
