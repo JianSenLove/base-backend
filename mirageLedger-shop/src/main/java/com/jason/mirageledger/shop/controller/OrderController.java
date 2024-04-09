@@ -97,6 +97,7 @@ public class OrderController {
             @RequestParam(value = "rows", defaultValue = "10") int size,
             @RequestParam(value = "status", required = false) String status) {
         LambdaQueryWrapper<Order> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.orderByDesc(Order::getUpdateTime);
         String userId = AuthenticationUtil.getAuthentication();
         if (StringUtils.isNotBlank(userId)) {
             queryWrapper.eq(Order::getUserId, userId);
