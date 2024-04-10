@@ -1,14 +1,12 @@
 package com.jason.mirageledger.shop.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jason.mirageledger.common.AuthenticationUtil;
 import com.jason.mirageledger.shop.entity.ViewHistory;
 import com.jason.mirageledger.shop.service.ViewHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.http.HttpStatus;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/mirageLedger/v1/viewHistory")
@@ -26,23 +24,14 @@ public class ViewHistoryController {
         ViewHistory history = viewHistoryService.getOne(new LambdaQueryWrapper<ViewHistory>()
                 .eq(ViewHistory::getUserId, userId)
                 .eq(ViewHistory::getProductId, viewHistory.getProductId()));
-        viewHistoryService.saveOrUpdate(viewHistory);
-        return viewHistory;
-    }
-
-    // 更新浏览记录，主要是浏览次数
-    @PutMapping("/{id}")
-    public ViewHistory updateViewHistory(@PathVariable String id, @RequestBody ViewHistory viewHistory) {
-        // 检查浏览记录是否存在
-        ViewHistory existingViewHistory = viewHistoryService.getById(id);
-        if (existingViewHistory == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "浏览记录未找到");
+        if (history != null) {
+            viewHistory.setCount(history.getCount() + 1);
+            viewHistoryService.updateById(history);
+        } else {
+            viewHistory.setCount(1);
+            viewHistoryService.saveOrUpdate(viewHistory);
         }
-
-        existingViewHistory.setCount(viewHistory.getCount()); // 假设ViewHistory实体中有一个计数器字段
-        viewHistoryService.updateById(existingViewHistory);
-
-        return existingViewHistory;
+        return viewHistory;
     }
 
     // 删除浏览记录
@@ -52,10 +41,10 @@ public class ViewHistoryController {
     }
 
     // 获取用户的浏览记录列表
-    @GetMapping("/user/{userId}")
-    public Page<ViewHistory> getUserViewHistory(@PathVariable String userId,
-                                                @RequestParam(value = "page", defaultValue = "1") int currentPage,
+    @GetMapping("")
+    public Page<ViewHistory> getUserViewHistory(@RequestParam(value = "page", defaultValue = "1") int currentPage,
                                                 @RequestParam(value = "rows", defaultValue = "10") int size) {
+        String userId = AuthenticationUtil.getAuthentication();
         LambdaQueryWrapper<ViewHistory> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(ViewHistory::getUserId, userId);
         return viewHistoryService.page(new Page<>(currentPage, size), queryWrapper);
