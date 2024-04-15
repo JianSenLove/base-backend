@@ -13,10 +13,13 @@ spring:
 jwt:
   secret: jason
 
+
 file:
-  upload-dir: C:/my_project/flower-shop/flower_image/
+  upload-dir: D:/myproject/image/flower_image/
 
 baseImagePath: http://localhost:8081/mirageLedger/image/view/
+
+pythonUrl: http://localhost:5000
 
 
 

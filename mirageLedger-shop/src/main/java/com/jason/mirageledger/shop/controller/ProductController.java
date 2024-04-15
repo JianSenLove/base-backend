@@ -1,31 +1,51 @@
 package com.jason.mirageledger.shop.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jason.mirageledger.common.CustomException;
 import com.jason.mirageledger.common.RestPreconditions;
 import com.jason.mirageledger.shop.entity.Category;
 import com.jason.mirageledger.shop.entity.Product;
+import com.jason.mirageledger.shop.entity.PythonClassificationResponse;
 import com.jason.mirageledger.shop.service.CategoryService;
 import com.jason.mirageledger.shop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.*;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.sql.SQLException;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/mirageLedger/v1/product")
 public class ProductController {
 
     @Autowired
+    private RestTemplate restTemplate;
+
+    @Autowired
     private ProductService productService;
 
     @Value("${baseImagePath}")
     private String baseImagePath;
+
+    @Value("${pythonUrl}")
+    private String pythonUrl;
 
     @Autowired
     private CategoryService categoryService;
@@ -88,13 +108,51 @@ public class ProductController {
             @RequestParam(value = "page", defaultValue = "1") Integer currentPage,
             @RequestParam(value = "rows", defaultValue = "10") Integer size,
             @RequestParam(value = "name", required = false) String name) {
-        LambdaQueryWrapper<Product> queryWrapper = new LambdaQueryWrapper<>();
-        if (name != null && !name.trim().isEmpty()) {
-            queryWrapper.like(Product::getName, name);
-        }
-        queryWrapper.orderByDesc(Product::getUpdateTime);
 
-        Page<Product> page = productService.page(new Page<>(currentPage, size), queryWrapper);
+        List<Product> externalProducts = new ArrayList<>();
+        // 当name为空时，才调用外部接口
+        if (StringUtils.isNotBlank(name)) {
+            try {
+                Product[] productArray = restTemplate.getForObject(pythonUrl + "get_recommend_products", Product[].class);
+                externalProducts = Arrays.asList(productArray != null ? productArray : new Product[0]);
+            } catch (HttpClientErrorException | HttpServerErrorException exception) {
+                throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR,"调用外部接口错误:" + exception.getMessage());
+            } catch (RestClientException e) {
+                throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR,"调用外部接口失败:" + e.getMessage());
+            }
+        }
+
+        Page<Product> page;
+        if (!externalProducts.isEmpty()) {
+            List<String> externalProductIds = externalProducts.stream().map(Product::getId).collect(Collectors.toList());
+            LambdaQueryWrapper<Product> queryWrapper = new LambdaQueryWrapper<>();
+            if (StringUtils.isNotBlank(name)) {
+                queryWrapper.like(Product::getName, name);
+            }
+            // 从数据库查询时排除外部请求获取的数据部分
+            queryWrapper.notIn(Product::getId, externalProductIds);
+            queryWrapper.orderByDesc(Product::getUpdateTime);
+
+            // 从数据库查询剩余的产品以填充分页
+            long total = productService.count(queryWrapper);
+            List<Product> dbProducts = productService.list(queryWrapper);
+
+            // 合并外部产品和数据库产品列表
+            List<Product> allProducts = new ArrayList<>(externalProducts);
+            allProducts.addAll(dbProducts);
+
+            // 创建手动分页
+            page = new Page<>(currentPage, size, total + externalProducts.size());
+            page.setRecords(allProducts);
+        } else {
+            // 如果外部接口返回的数据为空，或者`name`参数不为空，则正常从数据库查询并进行分页
+            LambdaQueryWrapper<Product> queryWrapper = new LambdaQueryWrapper<>();
+            if (name != null && !name.trim().isEmpty()) {
+                queryWrapper.like(Product::getName, name);
+            }
+            queryWrapper.orderByDesc(Product::getUpdateTime);
+            page = productService.page(new Page<>(currentPage, size), queryWrapper);
+        }
 
         page.getRecords().forEach(product -> {
             String imagePath = baseImagePath + product.getId() + ".jpg";
@@ -116,5 +174,47 @@ public class ProductController {
         product.setImage(imagePath);
         return product;
     }
+
+    @PostMapping("/classify")
+    public String classify(@RequestParam("image") MultipartFile imageFile) throws IOException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("image", getByteArrayResource(imageFile));
+
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+        try {
+            ResponseEntity<PythonClassificationResponse> response = restTemplate.exchange(
+                    pythonUrl + "/flowerclassify",
+                    HttpMethod.POST,
+                    requestEntity,
+                    PythonClassificationResponse.class
+            );
+
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                String name = response.getBody().getResult_data().getName();
+                // 解码可能的Unicode字符
+                String decodedName = java.net.URLDecoder.decode(name, StandardCharsets.UTF_8.name());
+                return decodedName;
+            } else {
+                return "错误";
+            }
+        } catch (IOException e) {
+            // 处理异常
+        }
+        return "错误";
+    }
+
+    private Resource getByteArrayResource(MultipartFile imageFile) throws IOException {
+        return new ByteArrayResource(imageFile.getBytes()) {
+            @Override
+            public String getFilename() {
+                return imageFile.getOriginalFilename(); // 这里要设置原始文件名
+            }
+        };
+    }
+
 
 }
