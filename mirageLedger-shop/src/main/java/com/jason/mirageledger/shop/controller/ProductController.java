@@ -3,7 +3,7 @@ package com.jason.mirageledger.shop.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.jason.mirageledger.common.CustomException;
+import com.jason.mirageledger.common.AuthenticationUtil;
 import com.jason.mirageledger.common.RestPreconditions;
 import com.jason.mirageledger.shop.entity.Category;
 import com.jason.mirageledger.shop.entity.Product;
@@ -111,14 +111,15 @@ public class ProductController {
 
         List<Product> externalProducts = new ArrayList<>();
         // 当name为空时，才调用外部接口
-        if (StringUtils.isNotBlank(name)) {
+        if (StringUtils.isBlank(name)) {
             try {
-                Product[] productArray = restTemplate.getForObject(pythonUrl + "get_recommend_products", Product[].class);
+                String userId = AuthenticationUtil.getAuthentication();
+                Product[] productArray = restTemplate.getForObject(pythonUrl + "/get_recommend_products?userId=" + userId, Product[].class);
                 externalProducts = Arrays.asList(productArray != null ? productArray : new Product[0]);
             } catch (HttpClientErrorException | HttpServerErrorException exception) {
-                throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR,"调用外部接口错误:" + exception.getMessage());
+                System.out.println("调用外部接口错误:" + exception.getMessage());
             } catch (RestClientException e) {
-                throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR,"调用外部接口失败:" + e.getMessage());
+                System.out.println("调用外部接口失败:" + e.getMessage());
             }
         }
 
