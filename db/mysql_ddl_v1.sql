@@ -64,3 +64,16 @@ CREATE TABLE mirageledger_order_product (
                                             CREATE_TIME timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
                                             UPDATE_TIME timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
 ) COMMENT = '订单商品关联表';
+
+CREATE TABLE `mirageledger_user_address` (
+                                             `ID_` VARCHAR(64) NOT NULL,
+                                             `USER_ID` VARCHAR(64) NOT NULL,
+                                             `NAME_` VARCHAR(255) NOT NULL COMMENT '收货人姓名',
+                                             `MOBILE_` VARCHAR(20) NOT NULL COMMENT '收货人手机号码',
+                                             `ADDRESS_` VARCHAR(255) NOT NULL COMMENT '收货地址',
+                                             `AREA_` VARCHAR(255) NOT NULL COMMENT '楼号、门牌号',
+                                             `FAULT_` TINYINT(1) NOT NULL DEFAULT '0' COMMENT '是否为默认地址（0：否，1：是）',
+                                             `CREATE_TIME` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                             `UPDATE_TIME` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                             PRIMARY KEY (`ID_`)
+) COMMENT='收货地址表';

@@ -21,12 +21,13 @@ public class UserAddressController {
     // 添加用户地址
     @PostMapping("")
     public UserAddress addUserAddress(@RequestBody UserAddress userAddress) {
-        RestPreconditions.checkParamArgument(userAddress.getAddress() != null, "地址不能为空");
-        RestPreconditions.checkParamArgument(userAddress.getCity() != null, "城市不能为空");
-        RestPreconditions.checkParamArgument(userAddress.getCountry() != null, "国家不能为空");
-        RestPreconditions.checkParamArgument(userAddress.getState() != null, "省份不能为空");
-        String userId = AuthenticationUtil.getAuthentication();
-        userAddress.setUserId(userId);
+        RestPreconditions.checkParamArgument(userAddress.getName() != null, "联系人名称不能为空");
+        RestPreconditions.checkParamArgument(userAddress.getMobile() != null, "联系人手机号不能为空");
+        RestPreconditions.checkParamArgument(userAddress.getAddress() != null, "收货地址不能为空");
+        RestPreconditions.checkParamArgument(userAddress.getArea() != null, "收货地址不能为空");
+        if (userAddress.getFault()==null || userAddress.getFault() != 1) {
+            userAddress.setFault(0);
+        }
         userAddressService.saveOrUpdate(userAddress);
         return userAddress;
     }
@@ -41,14 +42,14 @@ public class UserAddressController {
         if (StringUtils.isBlank(userAddress.getAddress())) {
             userAddress.setAddress(null);
         }
-        if (StringUtils.isBlank(userAddress.getCity())) {
-            userAddress.setCity(null);
+        if (StringUtils.isBlank(userAddress.getMobile())) {
+            userAddress.setMobile(null);
         }
-        if (StringUtils.isBlank(userAddress.getCountry())) {
-            userAddress.setCountry(null);
+        if (StringUtils.isBlank(userAddress.getArea())) {
+            userAddress.setArea(null);
         }
-        if (StringUtils.isBlank(userAddress.getState())) {
-            userAddress.setState(null);
+        if (StringUtils.isBlank(userAddress.getName())) {
+            userAddress.setName(null);
         }
 
         userAddressService.updateById(existingUserAddress);

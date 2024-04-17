@@ -7,53 +7,53 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
- * 用户地址表
+ * 收货地址表
  * @TableName mirageledger_user_address
  */
 @TableName(value ="mirageledger_user_address")
 @Data
 public class UserAddress implements Serializable {
     /**
-     * ID
+     * 
      */
     @TableId(value = "ID_", type = IdType.ASSIGN_UUID)
     private String id;
 
     /**
-     * 用户ID
+     * 
      */
     @TableField(value = "USER_ID", fill = FieldFill.INSERT)
     private String userId;
 
     /**
-     * 地址详情
+     * 收货人姓名
+     */
+    @TableField(value = "NAME_")
+    private String name;
+
+    /**
+     * 收货人手机号码
+     */
+    @TableField(value = "MOBILE_")
+    private String mobile;
+
+    /**
+     * 收货地址
      */
     @TableField(value = "ADDRESS_")
     private String address;
 
     /**
-     * 城市
+     * 楼号、门牌号
      */
-    @TableField(value = "CITY_")
-    private String city;
+    @TableField(value = "AREA_")
+    private String area;
 
     /**
-     * 州/省
+     * 是否为默认地址（0：否，1：是）
      */
-    @TableField(value = "STATE_")
-    private String state;
-
-    /**
-     * 国家
-     */
-    @TableField(value = "COUNTRY_")
-    private String country;
-
-    /**
-     * 邮政编码
-     */
-    @TableField(value = "ZIP_CODE")
-    private String zipCode;
+    @TableField(value = "FAULT_")
+    private Integer fault;
 
     /**
      * 创建时间
