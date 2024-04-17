@@ -9,8 +9,11 @@ import com.jason.mirageledger.shop.entity.UserAddress;
 import com.jason.mirageledger.shop.service.UserAddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/mirageLedger/v1/userAddress")
@@ -64,7 +67,7 @@ public class UserAddressController {
     }
 
     // 获取用户的用户地址列表
-    @GetMapping("")
+    @GetMapping("/page")
     public Page<UserAddress> getUserUserAddress(@RequestParam(value = "page", defaultValue = "1") int currentPage,
                                                 @RequestParam(value = "rows", defaultValue = "10") int size) {
         String userId = AuthenticationUtil.getAuthentication();
@@ -72,4 +75,49 @@ public class UserAddressController {
         queryWrapper.eq(UserAddress::getUserId, userId);
         return userAddressService.page(new Page<>(currentPage, size), queryWrapper);
     }
+
+    @GetMapping("/{id}")
+    public UserAddress getUserAddress(@PathVariable String id) {
+        UserAddress userAddress = userAddressService.getById(id);
+        RestPreconditions.checkParamArgument(userAddress.getUserId().equals(AuthenticationUtil.getAuthentication()), "用户地址未找到");
+        return userAddress;
+    }
+
+    @GetMapping("/default")
+    public UserAddress getDefaultUserAddress() {
+        String userId = AuthenticationUtil.getAuthentication();
+        LambdaQueryWrapper<UserAddress> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(UserAddress::getUserId, userId);
+        queryWrapper.eq(UserAddress::getFault, 1);
+        return userAddressService.getOne(queryWrapper);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @PutMapping("/default")
+    public UserAddress setDefaultUserAddress(@RequestParam String id) {
+        // 移除原有的默认地址
+        String userId = AuthenticationUtil.getAuthentication();
+        LambdaQueryWrapper<UserAddress> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(UserAddress::getUserId, userId);
+        queryWrapper.eq(UserAddress::getFault, 1);
+        UserAddress userAddress = userAddressService.getOne(queryWrapper);
+        if (userAddress != null) {
+            userAddress.setFault(0);
+            userAddressService.updateById(userAddress);
+        }
+        UserAddress newUserAddress = userAddressService.getById(id);
+        RestPreconditions.checkParamArgument(newUserAddress.getUserId().equals(AuthenticationUtil.getAuthentication()), "用户地址未找到");
+        newUserAddress.setFault(1);
+        userAddressService.updateById(newUserAddress);
+        return newUserAddress;
+    }
+
+    @GetMapping("/list")
+    public List<UserAddress> getUserAddressList() {
+        String userId = AuthenticationUtil.getAuthentication();
+        LambdaQueryWrapper<UserAddress> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(UserAddress::getUserId, userId);
+        return userAddressService.list(queryWrapper);
+    }
+
 }
