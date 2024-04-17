@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 @RestController
 @RequestMapping("/mirageLedger/image")
@@ -31,7 +32,7 @@ public class ImageController {
         // 使用ID作为文件名，并强制保存为.jpg格式
         String fileName = id + ".jpg";
         Path path = Paths.get(uploadDir + fileName);
-        Files.copy(image.getInputStream(), path);
+        Files.copy(image.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 
         return "图片上传成功:" + id;
     }
