@@ -101,7 +101,17 @@ public class UserAddressController {
         LambdaQueryWrapper<UserAddress> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(UserAddress::getUserId, userId);
         queryWrapper.eq(UserAddress::getFault, 1);
-        return userAddressService.getOne(queryWrapper);
+        UserAddress deafaultUserAddress =  userAddressService.getOne(queryWrapper);
+        if(deafaultUserAddress != null) {
+            return deafaultUserAddress;
+        } else {
+            List<UserAddress> userAddrs =  userAddressService.list(new LambdaQueryWrapper<UserAddress>().orderByDesc(UserAddress::getUpdateTime));
+            if(userAddrs != null && !userAddrs.isEmpty()) {
+                return userAddrs.get(0);
+            } else {
+                return null;
+            }
+        }
     }
 
     @Transactional(rollbackFor = Exception.class)
