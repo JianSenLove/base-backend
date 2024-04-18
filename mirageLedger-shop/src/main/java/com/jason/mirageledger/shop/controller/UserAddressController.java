@@ -31,6 +31,18 @@ public class UserAddressController {
         if (userAddress.getFault()==null || userAddress.getFault() != 1) {
             userAddress.setFault(0);
         }
+        // 如果默认地址，则将之前的默认地址改为非默认地址
+        if (userAddress.getFault() == 1) {
+            LambdaQueryWrapper<UserAddress> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(UserAddress::getUserId, AuthenticationUtil.getAuthentication());
+            queryWrapper.eq(UserAddress::getFault, 1);
+            List<UserAddress> userAddressList = userAddressService.list(queryWrapper);
+            if (userAddressList != null && userAddressList.size() > 0) {
+                UserAddress userAddress1 = userAddressList.get(0);
+                userAddress1.setFault(0);
+                userAddressService.updateById(userAddress1);
+            }
+        }
         userAddressService.saveOrUpdate(userAddress);
         return userAddress;
     }
@@ -117,6 +129,8 @@ public class UserAddressController {
         String userId = AuthenticationUtil.getAuthentication();
         LambdaQueryWrapper<UserAddress> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(UserAddress::getUserId, userId);
+        queryWrapper.orderByDesc(UserAddress::getUpdateTime);
+        queryWrapper.orderByDesc(UserAddress::getFault);
         return userAddressService.list(queryWrapper);
     }
 
