@@ -1,13 +1,11 @@
 package com.jason.mirageledger.shop.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
-
-import lombok.Data;
 
 /**
  * 订单表
@@ -39,6 +37,12 @@ public class Order implements Serializable {
      */
     @TableField(value = "STATUS_")
     private String status;
+
+    /**
+     * 收货地址ID
+     */
+    @TableField(value = "ADDRESS_ID")
+    private String addressId;
 
     @TableField(exist = false)
     private List<OrderProduct> orderProducts;

@@ -41,6 +41,7 @@ public class OrderController {
     public Order createOrder(@RequestBody Order order) {
         RestPreconditions.checkParamArgument(order.getOrderPrice() != null && order.getOrderPrice() > 0, "订单总金额必须大于0", HttpStatus.BAD_REQUEST);
         RestPreconditions.checkParamArgument(order.getOrderProducts() != null && !order.getOrderProducts().isEmpty(), "订单商品不能为空", HttpStatus.BAD_REQUEST);
+        RestPreconditions.checkParamArgument(StringUtils.isNotBlank(order.getAddressId()), "收货地址不能为空", HttpStatus.BAD_REQUEST);
 
         // 保存Order对象到数据库
         orderService.save(order);
