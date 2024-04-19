@@ -18,9 +18,6 @@ import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -109,51 +106,49 @@ public class ProductController {
             @RequestParam(value = "rows", defaultValue = "10") Integer size,
             @RequestParam(value = "name", required = false) String name) {
 
-        List<Product> externalProducts = new ArrayList<>();
-        // 当name为空时，才调用外部接口
-        if (StringUtils.isBlank(name)) {
-            try {
-                String userId = AuthenticationUtil.getAuthentication();
-                Product[] productArray = restTemplate.getForObject(pythonUrl + "/get_recommend_products?userId=" + userId, Product[].class);
-                externalProducts = Arrays.asList(productArray != null ? productArray : new Product[0]);
-            } catch (HttpClientErrorException | HttpServerErrorException exception) {
-                System.out.println("调用外部接口错误:" + exception.getMessage());
-            } catch (RestClientException e) {
-                System.out.println("调用外部接口失败:" + e.getMessage());
-            }
+        // 如果name参数不为空，则直接进行数据库查询并返回分页结果
+        if (StringUtils.isNotBlank(name)) {
+            LambdaQueryWrapper<Product> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.like(Product::getName, name);
+            queryWrapper.orderByDesc(Product::getUpdateTime);
+            return productService.page(new Page<>(currentPage, size), queryWrapper);
         }
 
-        Page<Product> page;
-        if (!externalProducts.isEmpty()) {
-            List<String> externalProductIds = externalProducts.stream().map(Product::getId).collect(Collectors.toList());
-            LambdaQueryWrapper<Product> queryWrapper = new LambdaQueryWrapper<>();
-            if (StringUtils.isNotBlank(name)) {
-                queryWrapper.like(Product::getName, name);
-            }
-            // 从数据库查询时排除外部请求获取的数据部分
-            queryWrapper.notIn(Product::getId, externalProductIds);
-            queryWrapper.orderByDesc(Product::getUpdateTime);
+        List<Product> recommendedProducts = new ArrayList<>();
 
-            // 从数据库查询剩余的产品以填充分页
-            long total = productService.count(queryWrapper);
-            List<Product> dbProducts = productService.list(queryWrapper);
-
-            // 合并外部产品和数据库产品列表
-            List<Product> allProducts = new ArrayList<>(externalProducts);
-            allProducts.addAll(dbProducts);
-
-            // 创建手动分页
-            page = new Page<>(currentPage, size, total + externalProducts.size());
-            page.setRecords(allProducts);
-        } else {
-            // 如果外部接口返回的数据为空，或者`name`参数不为空，则正常从数据库查询并进行分页
-            LambdaQueryWrapper<Product> queryWrapper = new LambdaQueryWrapper<>();
-            if (name != null && !name.trim().isEmpty()) {
-                queryWrapper.like(Product::getName, name);
-            }
-            queryWrapper.orderByDesc(Product::getUpdateTime);
-            page = productService.page(new Page<>(currentPage, size), queryWrapper);
+        // 第1步：调用第三方接口获取推荐商品列表
+        try {
+            String userId = AuthenticationUtil.getAuthentication();
+            Product[] productArray = restTemplate.getForObject(pythonUrl + "/get_recommend_products?userId=" + userId, Product[].class);
+            recommendedProducts = Arrays.asList(productArray != null ? productArray : new Product[0]);
+        } catch (Exception e) {
+            System.out.println("调用外部接口错误:" + e.getMessage());
         }
+
+        List<String> recommendedProductIds = recommendedProducts.stream().map(Product::getId).collect(Collectors.toList());
+        List<Product> dbProducts = new ArrayList<>();
+        if (!recommendedProductIds.isEmpty()) {
+            LambdaQueryWrapper<Product> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.notIn(Product::getId, recommendedProductIds).orderByDesc(Product::getUpdateTime);
+            dbProducts = productService.list(queryWrapper);
+        }
+
+        List<Product> allProducts = new ArrayList<>(recommendedProducts);
+        allProducts.addAll(dbProducts);
+
+        // 计算手动分页的起始和结束索引
+        int total = allProducts.size();
+        int start = (currentPage - 1) * size;
+        int end = Math.min(start + size, total);
+
+        // 如果起始索引超出数据总数，返回空列表
+        if (start >= total) {
+            return new Page<>(currentPage, size, total);
+        }
+
+        List<Product> pageContent = allProducts.subList(start, end);
+        Page<Product> page = new Page<>(currentPage, size, total);
+        page.setRecords(pageContent);
 
         page.getRecords().forEach(product -> {
             String imagePath = baseImagePath + product.getId() + ".jpg";
