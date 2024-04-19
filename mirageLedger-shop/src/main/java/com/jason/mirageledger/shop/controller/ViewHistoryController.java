@@ -25,7 +25,7 @@ public class ViewHistoryController {
                 .eq(ViewHistory::getUserId, userId)
                 .eq(ViewHistory::getProductId, viewHistory.getProductId()));
         if (history != null) {
-            viewHistory.setCount(history.getCount() + 1);
+            history.setCount(history.getCount() + 1);
             viewHistoryService.updateById(history);
         } else {
             viewHistory.setCount(1);

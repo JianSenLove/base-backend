@@ -126,12 +126,13 @@ public class ProductController {
         }
 
         List<String> recommendedProductIds = recommendedProducts.stream().map(Product::getId).collect(Collectors.toList());
-        List<Product> dbProducts = new ArrayList<>();
+
+        LambdaQueryWrapper<Product> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.orderByDesc(Product::getUpdateTime);
         if (!recommendedProductIds.isEmpty()) {
-            LambdaQueryWrapper<Product> queryWrapper = new LambdaQueryWrapper<>();
-            queryWrapper.notIn(Product::getId, recommendedProductIds).orderByDesc(Product::getUpdateTime);
-            dbProducts = productService.list(queryWrapper);
+            queryWrapper.notIn(Product::getId, recommendedProductIds);
         }
+        List<Product> dbProducts = productService.list(queryWrapper);
 
         List<Product> allProducts = new ArrayList<>(recommendedProducts);
         allProducts.addAll(dbProducts);
