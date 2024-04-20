@@ -76,6 +76,7 @@ public class UserController {
         if (StringUtils.isBlank(user.getPassword())) user.setPassword(null);
         user.setId(id);
         userService.updateById(user);
+        user.setImage(baseImagePath + user.getId() + ".jpg");
         return user;
     }
 
@@ -91,6 +92,7 @@ public class UserController {
 
         User user = userService.getById(id);
         RestPreconditions.checkParamArgument(user != null, "用户不存在!");
+        user.setImage(baseImagePath + user.getId() + ".jpg");
         return user;
     }
 
@@ -109,6 +111,7 @@ public class UserController {
 
         UserLambdaQueryWrapper.orderByDesc(User::getUpdateTime);
         userService.page(userPage,UserLambdaQueryWrapper);
+        userPage.getRecords().forEach(user -> user.setImage(baseImagePath + user.getId() + ".jpg"));
         return userPage;
     }
 

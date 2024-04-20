@@ -9,13 +9,18 @@ spring:
     password: mirage666666
     hikari:
       max-lifetime: 60
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
 
 jwt:
   secret: jason
 
 
 file:
-  upload-dir: D:/myproject/image/flower_image/
+  upload-dir: C:/my_project/flower-shop/flower_image/
 
 baseImagePath: http://localhost:8081/mirageLedger/image/view/
 
