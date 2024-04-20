@@ -75,7 +75,6 @@ public class UserController {
         if (StringUtils.isBlank(user.getName())) user.setName(null);
         if (StringUtils.isBlank(user.getPassword())) user.setPassword(null);
         user.setId(id);
-        user.setCode(null);
         userService.updateById(user);
         return user;
     }

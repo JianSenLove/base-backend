@@ -172,6 +172,28 @@ public class ProductController {
         return page;
     }
 
+    @GetMapping("/normal")
+    public Page<Product> getProductsPageNormal(
+            @RequestParam(value = "page", defaultValue = "1") Integer currentPage,
+            @RequestParam(value = "rows", defaultValue = "10") Integer size,
+            @RequestParam(value = "name", required = false) String name) {
+        LambdaQueryWrapper<Product> queryWrapper = new LambdaQueryWrapper<>();
+        if (StringUtils.isNotBlank(name)) {
+            queryWrapper.like(Product::getName, name);
+        }
+        queryWrapper.orderByDesc(Product::getUpdateTime);
+        Page<Product> page = productService.page(new Page<>(currentPage, size), queryWrapper);
+        page.getRecords().forEach(product -> {
+            String imagePath = baseImagePath + product.getId() + ".jpg";
+            product.setImage(imagePath);
+            Category category = categoryService.getById(product.getCategoryId());
+            if (category != null) {
+                product.setCategoryName(category.getName());
+            }
+        });
+        return page;
+    }
+
     @GetMapping("/{id}")
     public Product getProductDetail(@PathVariable String id) {
         Product product = productService.getById(id);
