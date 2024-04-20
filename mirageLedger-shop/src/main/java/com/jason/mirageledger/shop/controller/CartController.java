@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/mirageLedger/v1/cart")
 public class CartController {
@@ -73,6 +75,17 @@ public class CartController {
             cart.setImage(baseImagePath + cart.getProductId() + ".jpg");
         });
         return cartPage;
+    }
+
+    @DeleteMapping("")
+    public void removeProductFromCart(@RequestBody List<String> ids) {
+        cartService.removeByIds(ids);
+    }
+
+    @DeleteMapping("/all")
+    public void removeAllProductFromCart() {
+        String userId = AuthenticationUtil.getAuthentication();
+        cartService.remove(new LambdaQueryWrapper<Cart>().eq(Cart::getUserId, userId));
     }
 }
 

@@ -91,6 +91,7 @@ public class OrderController {
             orderProduct.setImage(baseImagePath + orderProduct.getProductId() + ".jpg");
             orderProduct.setProductName(productService.getById(orderProduct.getProductId()).getName());
         });
+        order.setOrderProducts(orderProducts);
         return order;
     }
 

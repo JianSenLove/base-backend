@@ -111,7 +111,16 @@ public class ProductController {
             LambdaQueryWrapper<Product> queryWrapper = new LambdaQueryWrapper<>();
             queryWrapper.like(Product::getName, name);
             queryWrapper.orderByDesc(Product::getUpdateTime);
-            return productService.page(new Page<>(currentPage, size), queryWrapper);
+            Page<Product> page = productService.page(new Page<>(currentPage, size), queryWrapper);
+            page.getRecords().forEach(product -> {
+                String imagePath = baseImagePath + product.getId() + ".jpg";
+                product.setImage(imagePath);
+                Category category = categoryService.getById(product.getCategoryId());
+                if (category != null) {
+                    product.setCategoryName(category.getName());
+                }
+            });
+            return page;
         }
 
         List<Product> recommendedProducts = new ArrayList<>();

@@ -59,5 +59,8 @@ public class User implements Serializable {
     private Boolean state = true;
 
     @TableField(exist = false)
+    private String image;
+
+    @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

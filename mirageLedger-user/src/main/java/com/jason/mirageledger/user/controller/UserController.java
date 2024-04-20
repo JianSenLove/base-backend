@@ -9,6 +9,7 @@ import com.jason.mirageledger.common.RestPreconditions;
 import com.jason.mirageledger.user.entity.po.User;
 import com.jason.mirageledger.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,9 @@ public class UserController {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
+    @Value("${baseImagePath}")
+    private String baseImagePath;
+
     @PostMapping("/login")
     public Map<String, Object> userLogin(@RequestBody User user) {
 
@@ -38,6 +42,7 @@ public class UserController {
 
         final String token = jwtTokenUtil.generateToken(one.getId());
         Map<String, Object> map = new HashMap<>();
+        one.setImage(baseImagePath + one.getId() + ".jpg");
         map.put("token", token);
         map.put("userInfo", one);
         return map;
