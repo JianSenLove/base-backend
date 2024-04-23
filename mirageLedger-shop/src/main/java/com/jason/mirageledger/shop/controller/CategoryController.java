@@ -30,7 +30,10 @@ public class CategoryController {
     @PostMapping("")
     public Category createCategory(@RequestBody Category category) {
         RestPreconditions.checkParamArgument(StringUtils.isNotBlank(category.getName()), "类别名称不能为空", HttpStatus.BAD_REQUEST);
-
+        // 判断类别名称是否已存在
+        RestPreconditions.checkParamArgument(
+                categoryService.lambdaQuery().eq(Category::getName, category.getName()).count() == 0,
+                "类别名称已存在", HttpStatus.BAD_REQUEST);
         categoryService.save(category);
         return category;
     }
@@ -42,7 +45,10 @@ public class CategoryController {
         RestPreconditions.checkParamArgument(
                 categoryService.lambdaQuery().eq(Category::getId, id).count() > 0,
                 "类别不存在", HttpStatus.NOT_FOUND);
-
+        // 判断类别名称是否已存在且不为当前类别ID
+        RestPreconditions.checkParamArgument(
+                categoryService.lambdaQuery().eq(Category::getName, category.getName()).ne(Category::getId, id).count() == 0,
+                "类别名称已存在", HttpStatus.BAD_REQUEST);
         category.setId(id);
         categoryService.updateById(category);
 
