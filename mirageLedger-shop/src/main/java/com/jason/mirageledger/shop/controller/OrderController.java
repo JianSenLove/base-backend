@@ -104,7 +104,7 @@ public class OrderController {
         LambdaQueryWrapper<Order> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.orderByDesc(Order::getUpdateTime);
         String userId = AuthenticationUtil.getAuthentication();
-        if (StringUtils.isNotBlank(userId)) {
+        if (StringUtils.isNotBlank(userId) && !AuthenticationUtil.isAdmin()) {
             queryWrapper.eq(Order::getUserId, userId);
         }
         if (StringUtils.isNotBlank(status)) {
