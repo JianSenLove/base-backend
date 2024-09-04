@@ -1,5 +1,10 @@
 server:
-  port: 8081
+  port: 8443
+  ssl:
+    key-store: classpath:keystore.p12
+    key-store-password: 123456
+    key-store-type: PKCS12
+    key-alias: mykey
 
 spring:
   datasource:
@@ -17,15 +22,6 @@ spring:
 
 jwt:
   secret: jason
-
-
-file:
-  upload-dir: C:/my_project/flower-shop/flower_image/
-
-baseImagePath: http://localhost:8081/mirageLedger/image/view/
-
-pythonUrl: http://localhost:5000
-
 
 
 

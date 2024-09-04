@@ -2,7 +2,6 @@ package com.jason.moneybag.teacher.controller;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.jason.moneybag.JwtTokenUtil;
 import com.jason.moneybag.teacher.entity.Teacher;
 import com.jason.moneybag.teacher.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +16,6 @@ public class TeacherController {
     @Autowired
     private TeacherService teacherService;
 
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
 
     @PostMapping("/login")
     public Map<String, Object> TeacherLogin(@RequestBody Teacher Teacher) {
@@ -78,19 +75,19 @@ public class TeacherController {
     }
 
     @GetMapping("/{id}")
-    public Teacher getTeacher(@PathVariable("id") String id) {
+    public String getTeacher(@PathVariable("id") String id) {
 //        RestPreconditions.checkParamArgument(id.equals(AuthenticationUtil.getAuthentication()) || AuthenticationUtil.isAdmin(), "只能查看自己的账户信息", HttpStatus.FORBIDDEN);
 //
 //        Teacher Teacher = TeacherService.getById(id);
 //        RestPreconditions.checkParamArgument(Teacher != null, "用户不存在!");
 //        Teacher.setImage(baseImagePath + Teacher.getId() + ".jpg");
-        return null;
+        return "6666";
     }
 
     @GetMapping("")
     public Page<Teacher> getTeacherPage(@RequestParam(defaultValue = "1") Integer page,
-                                       @RequestParam(defaultValue = "10") Integer rows,
-                                  @RequestParam(required = false) String name) {
+                                        @RequestParam(defaultValue = "10") Integer rows,
+                                        @RequestParam(required = false) String name) {
 //
 //        RestPreconditions.checkParamArgument(AuthenticationUtil.isAdmin(), "只有管理员能进行操作");
 //
