@@ -21,6 +21,9 @@ public class SecurityConfig {
     @Autowired
     private JwtRequestFilter jwtRequestFilter;
 
+    @Autowired
+    private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -29,6 +32,9 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/moneybag/v1/teacher/login", "/moneybag/v1/teacher/register").permitAll()
                 .anyRequest().authenticated()
+                .and()
+                .exceptionHandling()
+                    .authenticationEntryPoint(customAuthenticationEntryPoint)
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
