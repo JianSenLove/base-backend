@@ -5,7 +5,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 public class AuthenticationUtil {
-    public static String getAuthentication() {
+    public static String getUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserId = authentication.getName();
         RestPreconditions.checkParamArgument(StringUtils.isNotBlank(currentUserId), "用户信息为空");

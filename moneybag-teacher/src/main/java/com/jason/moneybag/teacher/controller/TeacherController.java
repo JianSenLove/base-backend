@@ -11,7 +11,6 @@ import com.jason.moneybag.RestPreconditions;
 import com.jason.moneybag.teacher.entity.Teacher;
 import com.jason.moneybag.teacher.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -56,18 +55,16 @@ public class TeacherController {
         return null;
     }
 
-    @PutMapping("/{id}")
-    public Teacher updateTeacher(@PathVariable("id") String id, @RequestBody Teacher Teacher) {
+    @PutMapping("")
+    public Teacher updateTeacher(@RequestBody Teacher teacher) {
 
-        RestPreconditions.checkParamArgument(id.equals(AuthenticationUtil.getAuthentication()) || AuthenticationUtil.isAdmin(), "只能修改自己账户的密码", HttpStatus.FORBIDDEN);
-
-        Teacher checkIdTeacher = teacherService.getById(id);
+        Teacher checkIdTeacher = teacherService.getById(AuthenticationUtil.getUserId());
         RestPreconditions.checkParamArgument(checkIdTeacher != null, "用户不存在!");
 
-        if (StringUtils.isBlank(Teacher.getName())) Teacher.setName(null);
-        if (StringUtils.isBlank(Teacher.getPassword())) Teacher.setPassword(null);
-        Teacher.setId(id);
-        teacherService.updateById(Teacher);
+        if (StringUtils.isBlank(teacher.getName())) teacher.setName(null);
+        if (StringUtils.isBlank(teacher.getPassword())) teacher.setPassword(null);
+        teacher.setId(AuthenticationUtil.getUserId());
+        teacherService.updateById(teacher);
         return null;
     }
 
@@ -77,16 +74,14 @@ public class TeacherController {
         teacherService.removeById(id);
     }
 
-    @GetMapping("/{id}")
-    public Teacher getTeacher(@PathVariable("id") String id) {
-        RestPreconditions.checkParamArgument(id.equals(AuthenticationUtil.getAuthentication()) || AuthenticationUtil.isAdmin(), "只能查看自己的账户信息", HttpStatus.FORBIDDEN);
-
-        Teacher Teacher = teacherService.getById(id);
+    @GetMapping("")
+    public Teacher getTeacher() {
+        Teacher Teacher = teacherService.getById(AuthenticationUtil.getUserId());
         RestPreconditions.checkParamArgument(Teacher != null, "用户不存在!");
         return null;
     }
 
-    @GetMapping("")
+    @GetMapping("/page")
     public Page<Teacher> getTeacherPage(@RequestParam(defaultValue = "1") Integer page,
                                        @RequestParam(defaultValue = "10") Integer rows,
                                   @RequestParam(required = false) String name) {
