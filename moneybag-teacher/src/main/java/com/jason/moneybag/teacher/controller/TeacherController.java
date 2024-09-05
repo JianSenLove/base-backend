@@ -4,11 +4,10 @@ package com.jason.moneybag.teacher.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.jason.moneybag.AuthenticationUtil;
-import com.jason.moneybag.DefaultImageEnum;
-import com.jason.moneybag.JwtTokenUtil;
-import com.jason.moneybag.RestPreconditions;
+import com.jason.moneybag.*;
+import com.jason.moneybag.teacher.entity.SystemInfo;
 import com.jason.moneybag.teacher.entity.Teacher;
+import com.jason.moneybag.teacher.service.SystemInfoService;
 import com.jason.moneybag.teacher.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +21,9 @@ public class TeacherController {
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+
+    @Autowired
+    private SystemInfoService systemInfoService;
 
     @PostMapping("/login")
     public String TeacherLogin(@RequestBody Teacher teacher) {
@@ -49,8 +51,16 @@ public class TeacherController {
         // 配置默认头像
         teacher.setAvatar(DefaultImageEnum.AVATAR.getimageBase64());
 
-        // TODO 配置默认系统信息背景
+        // 随机生成用户id
+        String id = PKGenerator.generateKey();
 
+        SystemInfo systemInfo = new SystemInfo();
+        systemInfo.setTeacherId(id);
+        systemInfo.setKey("background");
+        systemInfo.setValue(DefaultImageEnum.BACKGROUND.getimageBase64());
+        systemInfoService.save(systemInfo);
+
+        teacher.setId(id);
         teacherService.save(teacher);
         return null;
     }

@@ -7,41 +7,35 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
- * 教师表
- * @TableName MONEYBAG_TEACHER
+ * 系统信息表
+ * @TableName MONEYBAG_SYSTEM_INFO
  */
-@TableName(value ="MONEYBAG_TEACHER")
+@TableName(value ="MONEYBAG_SYSTEM_INFO")
 @Data
-public class Teacher implements Serializable {
+public class SystemInfo implements Serializable {
     /**
-     * 教师ID
+     * 系统信息ID
      */
-    @TableId(value = "ID_")
+    @TableId(value = "ID_", type = IdType.ASSIGN_UUID)
     private String id;
 
     /**
-     * 教师姓名
+     * 教师ID
      */
-    @TableField(value = "NAME_")
-    private String name;
+    @TableField(value = "TEACHER_ID")
+    private String teacherId;
 
     /**
-     * 教师头像
+     * 系统信息键
      */
-    @TableField(value = "AVATAR_")
-    private String avatar;
+    @TableField(value = "KEY_")
+    private String key;
 
     /**
-     * 教师账号
+     * 系统信息值
      */
-    @TableField(value = "USERACCOUNT_")
-    private String useraccount;
-
-    /**
-     * 教师密码
-     */
-    @TableField(value = "PASSWORD_")
-    private String password;
+    @TableField(value = "VALUE_")
+    private String value;
 
     /**
      * 创建时间
