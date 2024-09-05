@@ -18,6 +18,8 @@ import java.util.ArrayList;
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
+    private static final String BEARER_PREFIX = "Bearer ";
+
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
@@ -25,44 +27,38 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
-        final String requestTokenHeader = request.getHeader("Authorization");
-        String requestURL = request.getRequestURI();
+        final String authorizationHeader = request.getHeader("Authorization");
 
-        // 跳过登录接口的JWT验证
-        if ("/mirageLedger/user/login".equals(requestURL)) {
-            chain.doFilter(request, response);
-            return;
-        }
-
-        // 跳过注册接口的JWT验证
-        if ("/mirageLedger/user/register".equals(requestURL)) {
-            chain.doFilter(request, response);
-            return;
-        }
-
-        // 跳过图片获取接口的验证
-        if (requestURL.contains("/mirageLedger/image")) {
-            chain.doFilter(request, response);
-            return;
-        }
-
-        if (StringUtils.isNotBlank(requestTokenHeader)) {
+        // 检查 Authorization 头是否存在并且以 "Bearer " 开头
+        if (StringUtils.isNotBlank(authorizationHeader) && authorizationHeader.startsWith(BEARER_PREFIX)) {
             try {
-                String jwtToken = requestTokenHeader.substring(7);
+                // 提取 JWT token，跳过 "Bearer " 前缀
+                String jwtToken = authorizationHeader.substring(BEARER_PREFIX.length());
+
+                // 从 token 中获取用户 ID
                 String userId = jwtTokenUtil.getUserIdFromToken(jwtToken);
 
-                if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null && jwtTokenUtil.validateToken(jwtToken, userId)) {
+                // 检查用户是否已认证，且 token 是否有效
+                if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null && jwtTokenUtil.validateToken(jwtToken)) {
+                    // 创建认证对象并将其放入安全上下文
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userId, null, new ArrayList<>());
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             } catch (JwtException e) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid Token");
+                // 如果 token 无效，发送 401 错误
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "用户凭证无效");
+                return;
+            } catch (Exception e) {
+                // 捕获其他潜在异常并记录日志
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "登录出错");
                 return;
             }
         }
 
+        // 继续处理请求
         chain.doFilter(request, response);
     }
 }
+
 
 

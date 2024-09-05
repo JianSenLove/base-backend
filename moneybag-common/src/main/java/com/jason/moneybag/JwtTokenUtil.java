@@ -24,9 +24,9 @@ public class JwtTokenUtil {
                 .compact();
     }
 
-    public Boolean validateToken(String token, String userId) {
-        final String userIdFromToken = getUserIdFromToken(token);
-        return (userId.equals(userIdFromToken) && !isTokenExpired(token));
+    // TODO 校验签名
+    public Boolean validateToken(String token) {
+        return !isTokenExpired(token);
     }
 
     public String getUserIdFromToken(String token) {

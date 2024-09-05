@@ -8,8 +8,6 @@ import com.jason.moneybag.teacher.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @RestController
 @RequestMapping("/moneybag/v1/teacher")
 public class TeacherController {
@@ -21,7 +19,7 @@ public class TeacherController {
     private JwtTokenUtil jwtTokenUtil;
 
     @PostMapping("/login")
-    public Map<String, Object> TeacherLogin(@RequestBody Teacher Teacher) {
+    public String TeacherLogin(@RequestBody Teacher Teacher) {
 
 //        RestPreconditions.checkParamArgument(StringUtils.isNotBlank(Teacher.getCode()) || StringUtils.isNotBlank(Teacher.getPassword()), "账号或密码为空!");
 //
@@ -36,7 +34,7 @@ public class TeacherController {
 //        map.put("token", token);
 //        map.put("TeacherInfo", one);
 //        return map;
-        return null;
+        return "login";
     }
 
     @PostMapping("/register")
@@ -78,13 +76,13 @@ public class TeacherController {
     }
 
     @GetMapping("/{id}")
-    public Teacher getTeacher(@PathVariable("id") String id) {
+    public String getTeacher(@PathVariable("id") String id) {
 //        RestPreconditions.checkParamArgument(id.equals(AuthenticationUtil.getAuthentication()) || AuthenticationUtil.isAdmin(), "只能查看自己的账户信息", HttpStatus.FORBIDDEN);
 //
 //        Teacher Teacher = TeacherService.getById(id);
 //        RestPreconditions.checkParamArgument(Teacher != null, "用户不存在!");
 //        Teacher.setImage(baseImagePath + Teacher.getId() + ".jpg");
-        return null;
+        return "666";
     }
 
     @GetMapping("")
