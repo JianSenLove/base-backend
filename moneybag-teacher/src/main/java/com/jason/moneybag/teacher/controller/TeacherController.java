@@ -65,7 +65,7 @@ public class TeacherController {
         return null;
     }
 
-    @PutMapping("")
+    @PutMapping("/update")
     public Teacher updateTeacher(@RequestBody Teacher teacher) {
 
         Teacher checkIdTeacher = teacherService.getById(AuthenticationUtil.getUserId());
@@ -78,13 +78,13 @@ public class TeacherController {
         return null;
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public void deleteTeacher(@PathVariable("id") String id) {
         RestPreconditions.checkParamArgument(AuthenticationUtil.isAdmin(), "只有管理员能进行操作");
         teacherService.removeById(id);
     }
 
-    @GetMapping("")
+    @GetMapping("/getOne")
     public Teacher getTeacher() {
         Teacher Teacher = teacherService.getById(AuthenticationUtil.getUserId());
         RestPreconditions.checkParamArgument(Teacher != null, "用户不存在!");
