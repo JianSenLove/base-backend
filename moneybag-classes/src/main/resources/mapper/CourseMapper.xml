@@ -10,7 +10,7 @@
             <result property="name" column="NAME_" jdbcType="VARCHAR"/>
             <result property="totalHours" column="TOTAL_HOURS_" jdbcType="INTEGER"/>
             <result property="hoursPerClass" column="HOURS_PER_CLASS" jdbcType="INTEGER"/>
-            <result property="finshed" column="FINSHED_" jdbcType="TINYINT"/>
+            <result property="finished" column="FINISHED_" jdbcType="TINYINT"/>
             <result property="courseType" column="COURSE_TYPE" jdbcType="VARCHAR"/>
             <result property="createdAt" column="CREATED_AT" jdbcType="TIMESTAMP"/>
             <result property="updatedAt" column="UPDATED_AT" jdbcType="TIMESTAMP"/>
@@ -18,7 +18,7 @@
 
     <sql id="Base_Column_List">
         ID_,TEACHER_ID,NAME_,
-        TOTAL_HOURS_,HOURS_PER_CLASS,FINSHED_,
+        TOTAL_HOURS_,HOURS_PER_CLASS,FINISHED_,
         COURSE_TYPE,CREATED_AT,UPDATED_AT
     </sql>
 </mapper>

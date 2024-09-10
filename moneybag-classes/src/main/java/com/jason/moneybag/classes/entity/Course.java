@@ -47,7 +47,7 @@ public class Course implements Serializable {
      * 是否结课
      */
     @TableField(value = "FINSHED_")
-    private Integer finshed;
+    private Boolean finished;
 
     /**
      * 课程类型(一对一,一对多)
