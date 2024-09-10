@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jason.moneybag.classes.mapper.TeachingPlanMapper">
+
+    <resultMap id="BaseResultMap" type="com.jason.moneybag.classes.entity.TeachingPlan">
+            <id property="id" column="ID_" jdbcType="VARCHAR"/>
+            <result property="teacherId" column="TEACHER_ID" jdbcType="VARCHAR"/>
+            <result property="studentId" column="STUDENT_ID" jdbcType="VARCHAR"/>
+            <result property="name" column="NAME_" jdbcType="VARCHAR"/>
+            <result property="content" column="CONTENT" jdbcType="VARCHAR"/>
+            <result property="completionStatus" column="COMPLETION_STATUS" jdbcType="VARCHAR"/>
+            <result property="createdAt" column="CREATED_AT" jdbcType="TIMESTAMP"/>
+            <result property="updatedAt" column="UPDATED_AT" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        ID_,TEACHER_ID,STUDENT_ID,
+        NAME_,CONTENT,COMPLETION_STATUS,
+        CREATED_AT,UPDATED_AT
+    </sql>
+</mapper>

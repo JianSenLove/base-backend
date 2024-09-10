@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jason.moneybag.classes.mapper.CourseHistoryMapper">
+
+    <resultMap id="BaseResultMap" type="com.jason.moneybag.classes.entity.CourseHistory">
+            <id property="id" column="ID_" jdbcType="VARCHAR"/>
+            <result property="courseInstanceId" column="COURSE_INSTANCE_ID" jdbcType="VARCHAR"/>
+            <result property="attended" column="ATTENDED_" jdbcType="TINYINT"/>
+            <result property="reason" column="REASON" jdbcType="VARCHAR"/>
+            <result property="actualStartTime" column="ACTUAL_START_TIME" jdbcType="TIMESTAMP"/>
+            <result property="actualEndTime" column="ACTUAL_END_TIME" jdbcType="TIMESTAMP"/>
+            <result property="createdAt" column="CREATED_AT" jdbcType="TIMESTAMP"/>
+            <result property="updatedAt" column="UPDATED_AT" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        ID_,COURSE_INSTANCE_ID,ATTENDED_,
+        REASON,ACTUAL_START_TIME,ACTUAL_END_TIME,
+        CREATED_AT,UPDATED_AT
+    </sql>
+</mapper>

@@ -1,4 +1,4 @@
-package com.jason.moneybag.teacher.entity;
+package com.jason.moneybag.classes.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
@@ -7,41 +7,41 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
- * 教师表
- * @TableName MONEYBAG_TEACHER
+ * 试课表
+ * @TableName MONEYBAG_TRIAL_CLASS
  */
-@TableName(value ="MONEYBAG_TEACHER")
+@TableName(value ="MONEYBAG_TRIAL_CLASS")
 @Data
-public class Teacher implements Serializable {
+public class TrialClass implements Serializable {
     /**
-     * 教师ID
+     * 试课ID
      */
     @TableId(value = "ID_", type = IdType.ASSIGN_UUID)
     private String id;
 
     /**
-     * 教师姓名
+     * 教师ID
      */
-    @TableField(value = "NAME_")
-    private String name;
+    @TableField(value = "TEACHER_ID")
+    private String teacherId;
 
     /**
-     * 教师头像
+     * 学生名称
      */
-    @TableField(value = "AVATAR_")
-    private String avatar;
+    @TableField(value = "STUDENT_NAME")
+    private String studentName;
 
     /**
-     * 教师账号
+     * 试课是否成功
      */
-    @TableField(value = "USERACCOUNT_")
-    private String useraccount;
+    @TableField(value = "SUCCESS_")
+    private Integer success;
 
     /**
-     * 教师密码
+     * 试课失败原因
      */
-    @TableField(value = "PASSWORD_")
-    private String password;
+    @TableField(value = "REASON_")
+    private String reason;
 
     /**
      * 创建时间

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jason.moneybag.classes.mapper.TrialClassMapper">
+
+    <resultMap id="BaseResultMap" type="com.jason.moneybag.classes.entity.TrialClass">
+            <id property="id" column="ID_" jdbcType="VARCHAR"/>
+            <result property="teacherId" column="TEACHER_ID" jdbcType="VARCHAR"/>
+            <result property="studentName" column="STUDENT_NAME" jdbcType="VARCHAR"/>
+            <result property="success" column="SUCCESS_" jdbcType="TINYINT"/>
+            <result property="reason" column="REASON_" jdbcType="VARCHAR"/>
+            <result property="createdAt" column="CREATED_AT" jdbcType="TIMESTAMP"/>
+            <result property="updatedAt" column="UPDATED_AT" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        ID_,TEACHER_ID,STUDENT_NAME,
+        SUCCESS_,REASON_,CREATED_AT,
+        UPDATED_AT
+    </sql>
+</mapper>
