@@ -4,13 +4,18 @@ package com.jason.moneybag.teacher.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.jason.moneybag.*;
-import com.jason.moneybag.teacher.entity.SystemInfo;
+import com.jason.moneybag.AuthenticationUtil;
+import com.jason.moneybag.DefaultImages;
+import com.jason.moneybag.JwtTokenUtil;
+import com.jason.moneybag.RestPreconditions;
 import com.jason.moneybag.teacher.entity.Teacher;
 import com.jason.moneybag.teacher.service.SystemInfoService;
 import com.jason.moneybag.teacher.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/moneybag/v1/teacher")
@@ -25,22 +30,20 @@ public class TeacherController {
     @Autowired
     private SystemInfoService systemInfoService;
 
+    private static final String background = "background";
+
     @PostMapping("/login")
     public String TeacherLogin(@RequestBody Teacher teacher) {
-
         RestPreconditions.checkParamArgument(StringUtils.isNotBlank(teacher.getUseraccount()) || StringUtils.isNotBlank(teacher.getPassword()), "账号或密码不能为空!");
-
         Teacher one = teacherService.getOne(new LambdaQueryWrapper<Teacher>().eq(Teacher::getUseraccount, teacher.getUseraccount()));
-
         RestPreconditions.checkParamArgument(one != null, "账号不存在");
-
         RestPreconditions.checkParamArgument(one.getPassword().equals(teacher.getPassword()), "密码不正确");
-
         return jwtTokenUtil.generateToken(one.getId());
     }
 
     @PostMapping("/register")
-    public Teacher TeacherRegister(@RequestBody Teacher teacher) {
+    @Transactional
+    public Teacher TeacherRegister(@RequestBody Teacher teacher) throws IOException {
         RestPreconditions.checkParamArgument(StringUtils.isNotBlank(teacher.getUseraccount()), "账号不能为空!");
         RestPreconditions.checkParamArgument(StringUtils.isNotBlank(teacher.getName()), "用户名不能为空!");
         RestPreconditions.checkParamArgument(StringUtils.isNotBlank(teacher.getPassword()), "密码不能为空!");
@@ -48,37 +51,26 @@ public class TeacherController {
         Teacher existTeacher = teacherService.getOne(new LambdaQueryWrapper<Teacher>().eq(Teacher::getUseraccount, teacher.getUseraccount()));
         RestPreconditions.checkParamArgument(existTeacher == null, "账号已存在!");
 
-        // 配置默认头像
-        teacher.setAvatar(DefaultImageEnum.AVATAR.getimageBase64());
-
-        // 随机生成用户id
-        String id = PKGenerator.generateKey();
-
-        SystemInfo systemInfo = new SystemInfo();
-        systemInfo.setTeacherId(id);
-        systemInfo.setKey("background");
-        systemInfo.setValue(DefaultImageEnum.BACKGROUND.getimageBase64());
-        systemInfoService.save(systemInfo);
-
-        teacher.setId(id);
+        // 1.插入用户信息
         teacherService.save(teacher);
-        return null;
+
+        // 2.初始化用户系统配置信息
+        systemInfoService.saveKeyValueByTeacherId(teacher.getId(), background, DefaultImages.DEFAULT_BACKGROUND.getBase64Image());
+        return teacher;
     }
 
     @PutMapping("/update")
+    @Transactional
     public Teacher updateTeacher(@RequestBody Teacher teacher) {
-
         Teacher checkIdTeacher = teacherService.getById(AuthenticationUtil.getUserId());
         RestPreconditions.checkParamArgument(checkIdTeacher != null, "用户不存在!");
 
-        if (StringUtils.isBlank(teacher.getName())) teacher.setName(null);
-        if (StringUtils.isBlank(teacher.getPassword())) teacher.setPassword(null);
-        teacher.setId(AuthenticationUtil.getUserId());
         teacherService.updateById(teacher);
-        return null;
+        return teacherService.getById(AuthenticationUtil.getUserId());
     }
 
     @DeleteMapping("/delete/{id}")
+    @Transactional
     public void deleteTeacher(@PathVariable("id") String id) {
         RestPreconditions.checkParamArgument(AuthenticationUtil.isAdmin(), "只有管理员能进行操作");
         teacherService.removeById(id);
@@ -88,13 +80,13 @@ public class TeacherController {
     public Teacher getTeacher() {
         Teacher Teacher = teacherService.getById(AuthenticationUtil.getUserId());
         RestPreconditions.checkParamArgument(Teacher != null, "用户不存在!");
-        return null;
+        return teacherService.getById(AuthenticationUtil.getUserId());
     }
 
     @GetMapping("/page")
     public Page<Teacher> getTeacherPage(@RequestParam(defaultValue = "1") Integer page,
-                                       @RequestParam(defaultValue = "10") Integer rows,
-                                  @RequestParam(required = false) String name) {
+                                        @RequestParam(defaultValue = "10") Integer rows,
+                                        @RequestParam(required = false) String name) {
 
         RestPreconditions.checkParamArgument(AuthenticationUtil.isAdmin(), "只有管理员能进行操作");
 
@@ -104,6 +96,6 @@ public class TeacherController {
             teacherLambdaQueryWrapper.like(Teacher::getName, name);
         }
 
-        return teacherService.page(TeacherPage,teacherLambdaQueryWrapper);
+        return teacherService.page(TeacherPage, teacherLambdaQueryWrapper);
     }
 }

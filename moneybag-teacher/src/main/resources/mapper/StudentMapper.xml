@@ -13,7 +13,7 @@
             <result property="birthdate" column="BIRTHDATE_" jdbcType="DATE"/>
             <result property="phone" column="PHONE_" jdbcType="VARCHAR"/>
             <result property="parentPhone" column="PARENT_PHONE" jdbcType="VARCHAR"/>
-            <result property="parentWechat" column="PARENT_WECHAT_" jdbcType="VARCHAR"/>
+            <result property="parentWechat" column="PARENT_WECHAT" jdbcType="VARCHAR"/>
             <result property="notes" column="NOTES" jdbcType="VARCHAR"/>
             <result property="createdAt" column="CREATED_AT" jdbcType="TIMESTAMP"/>
             <result property="updatedAt" column="UPDATED_AT" jdbcType="TIMESTAMP"/>
@@ -22,7 +22,7 @@
     <sql id="Base_Column_List">
         ID_,TEACHER_ID,NAME_,
         AVATAR_,GENDER,BIRTHDATE_,
-        PHONE_,PARENT_PHONE,PARENT_WECHAT_,
+        PHONE_,PARENT_PHONE,PARENT_WECHAT,
         NOTES,CREATED_AT,UPDATED_AT
     </sql>
 </mapper>

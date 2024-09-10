@@ -14,7 +14,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class SystemInfoServiceImpl extends ServiceImpl<SystemInfoMapper, SystemInfo>
     implements SystemInfoService{
-
+    @Override
+    public void saveKeyValueByTeacherId(String teacherId, String key, String value) {
+        SystemInfo systemInfo = new SystemInfo();
+        systemInfo.setTeacherId(teacherId);
+        systemInfo.setKey(key);
+        systemInfo.setValue(value);
+        this.save(systemInfo);
+    }
 }
 
 

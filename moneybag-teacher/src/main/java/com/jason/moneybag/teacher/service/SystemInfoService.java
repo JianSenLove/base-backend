@@ -1,7 +1,7 @@
 package com.jason.moneybag.teacher.service;
 
-import com.jason.moneybag.teacher.entity.SystemInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.jason.moneybag.teacher.entity.SystemInfo;
 
 /**
 * @author 付建森
@@ -10,4 +10,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface SystemInfoService extends IService<SystemInfo> {
 
+    void saveKeyValueByTeacherId(String teacherId, String key, String value);
 }

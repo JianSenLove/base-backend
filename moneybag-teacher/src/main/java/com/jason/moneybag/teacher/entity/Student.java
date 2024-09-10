@@ -65,7 +65,7 @@ public class Student implements Serializable {
     /**
      * 家长微信号
      */
-    @TableField(value = "PARENT_WECHAT_")
+    @TableField(value = "PARENT_WECHAT")
     private String parentWechat;
 
     /**
