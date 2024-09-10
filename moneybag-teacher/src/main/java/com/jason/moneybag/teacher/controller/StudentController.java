@@ -35,6 +35,7 @@ public class StudentController {
             queryWrapper.eq(Student::getNickname, student.getNickname());
         } else {
             // 如果小名为空，则仅检查是否有相同名字且小名也为空的学生
+            student.setNickname(null);
             queryWrapper.isNull(Student::getNickname);
         }
 
@@ -63,6 +64,7 @@ public class StudentController {
         if (StringUtils.isNotBlank(student.getNickname())) {
             queryWrapper.eq(Student::getNickname, student.getNickname());
         } else {
+            student.setNickname(null);
             queryWrapper.isNull(Student::getNickname);
         }
 
