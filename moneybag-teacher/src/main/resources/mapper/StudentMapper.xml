@@ -8,6 +8,7 @@
             <id property="id" column="ID_" jdbcType="VARCHAR"/>
             <result property="teacherId" column="TEACHER_ID" jdbcType="VARCHAR"/>
             <result property="name" column="NAME_" jdbcType="VARCHAR"/>
+            <result property="nickname" column="NICKNAME_" jdbcType="VARCHAR"/>
             <result property="avatar" column="AVATAR_" jdbcType="VARCHAR"/>
             <result property="gender" column="GENDER" jdbcType="VARCHAR"/>
             <result property="birthdate" column="BIRTHDATE_" jdbcType="DATE"/>
@@ -20,7 +21,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        ID_,TEACHER_ID,NAME_,
+        ID_,TEACHER_ID,NAME_,NICKNAME_,
         AVATAR_,GENDER,BIRTHDATE_,
         PHONE_,PARENT_PHONE,PARENT_WECHAT,
         NOTES,CREATED_AT,UPDATED_AT

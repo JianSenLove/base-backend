@@ -4,6 +4,7 @@ import java.io.IOException;
 
 public enum DefaultImages {
     DEFAULT_AVATAR("default-avatar.jpg"),
+    DEAFULT_STUDENT_AVATAR("default-student-avatar.jpg"),
     DEFAULT_BACKGROUND("default-background.jpg");
 
     private final String base64Image;

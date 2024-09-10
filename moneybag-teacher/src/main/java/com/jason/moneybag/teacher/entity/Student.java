@@ -31,6 +31,11 @@ public class Student implements Serializable {
      */
     @TableField(value = "NAME_")
     private String name;
+    /**
+     * 学生姓名
+     */
+    @TableField(value = "NICKNAME_")
+    private String nickname;
 
     /**
      * 学生头像
